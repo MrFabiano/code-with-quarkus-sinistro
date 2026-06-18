@@ -24,7 +24,7 @@ services:
     volumes:
       - pgadmin-data:/var/lib/pgadmin
     networks:
-      - seguros-network # <--- CORRIGIDO: Agora na mesma rede do Postgres
+      - seguros-network
 
   seguros-api:
     image: seguros/sinistro-api:1.0.0

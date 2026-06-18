@@ -1,8 +1,4 @@
 package org.acme.resource.seguros.sinistro.event;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.quarkus.security.Authenticated;
 import io.smallrye.common.annotation.RunOnVirtualThread;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -10,17 +6,10 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.MediaType;
 import org.acme.resource.seguros.sinistro.model.DTO.MensagemResponse;
-import org.acme.resource.seguros.sinistro.model.EventoPendente;
 import org.acme.resource.seguros.sinistro.model.Sinistro;
-import org.acme.resource.seguros.sinistro.producer.SinistroProducer;
 import org.acme.resource.seguros.sinistro.service.SinistroService;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.eclipse.microprofile.faulttolerance.CircuitBreaker;
-import org.eclipse.microprofile.faulttolerance.Fallback;
-import org.eclipse.microprofile.faulttolerance.Retry;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -118,33 +107,4 @@ public class SinistroResource {
                 .entity(new MensagemResponse("Falha na exclusao: O sinistro com o UUID '" + uuid + "' nao foi encontrado."))
                 .build();
     }
-
-//    @Transactional(Transactional.TxType.REQUIRES_NEW) // <--- CRÍTICO: Abre uma nova transação isolada
-//    public Response fallbackCriarSinistro(Sinistro sinistro) {
-//        System.err.println("!!! FALLBACK ACIONADO: Kafka indisponivel. Salvando contingencia no banco...");
-//
-//        try {
-//            // 1. Persiste o Sinistro original primeiro (já que a transação principal sofreu rollback)
-//            sinistro.id = null; // Garante que é um insert limpo
-//            sinistro.persist();
-//
-//            // 2. Cria o registro de segurança na tabela de eventos pendentes
-//            EventoPendente pendente = new EventoPendente();
-//            pendente.payloadJson = objectMapper.writeValueAsString(sinistro);
-//            pendente.dataCriacao = LocalDateTime.now();
-//            pendente.motivoFalha = "Kafka Producer Unreachable";
-//            pendente.persist();
-//
-//            // 3. Retorna o JSON padronizado com HTTP 202
-//            return Response.status(Response.Status.ACCEPTED)
-//                    .entity(new MensagemResponse("Sinistro registrado com sucesso, mas a notificacao esta pendente devido a instabilidade no sistema de eventos."))
-//                    .build();
-//
-//        } catch (JsonProcessingException e) {
-//            System.err.println("Erro grave de serializacao no fallback: " + e.getMessage());
-//            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-//                    .entity(new MensagemResponse("Erro interno ao processar a contingencia do sinistro."))
-//                    .build();
-//        }
-//    }
 }

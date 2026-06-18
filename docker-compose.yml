@@ -1,0 +1,112 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: seguros-db
+    environment:
+      POSTGRES_USER: quarkus
+      POSTGRES_PASSWORD: quarkus
+      POSTGRES_DB: seguros_db
+    ports:
+      - "5432:5432"
+    networks:
+      - seguros-network
+
+  pgadmin:
+    image: dpage/pgadmin4:9.5
+    container_name: seguros-pgadmin
+    depends_on:
+      - postgres
+    environment:
+      PGADMIN_DEFAULT_EMAIL: fabiannosanttos@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: postgres
+    ports:
+      - "5051:80"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    networks:
+      - seguros-network # <--- CORRIGIDO: Agora na mesma rede do Postgres
+
+  seguros-api:
+    image: seguros/sinistro-api:1.0.0
+    container_name: seguros-api
+    environment:
+      QUARKUS_PROFILE: prod
+      QUARKUS_DATASOURCE_USERNAME: quarkus
+      QUARKUS_DATASOURCE_PASSWORD: quarkus
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+      - kafka
+      - keycloak
+    networks:
+      - seguros-network
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: seguros-kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT'
+      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092'
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_PROCESS_ROLES: 'broker,controller'
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka:29093'
+      KAFKA_LISTENERS: 'PLAINTEXT://kafka:29092,CONTROLLER://kafka:29093,PLAINTEXT_HOST://0.0.0.0:9092'
+      KAFKA_INTER_BROKER_LISTENER_NAME: 'PLAINTEXT'
+      KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
+      KAFKA_LOG_DIRS: '/tmp/kraft-combined-logs'
+      CLUSTER_ID: 'MkU3OEVBNTcwNTJENDM2Qk'
+    networks:
+      - seguros-network
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: seguros-kafka-ui
+    ports:
+      - "8081:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
+    depends_on:
+      - kafka
+    networks:
+      - seguros-network
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: seguros-jaeger
+    ports:
+      - "16686:16686"
+      - "4317:4317"
+    networks:
+      - seguros-network
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0
+    container_name: seguros-auth
+    command: start-dev --http-relative-path /auth
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HOSTNAME_STRICT: "false"
+      KC_HTTP_ENABLED: "true"
+    ports:
+      - "8180:8080"
+    volumes:
+      - keycloak-data:/opt/keycloak/data
+    networks:
+      - seguros-network
+
+networks:
+  seguros-network:
+    driver: bridge
+
+volumes:
+  keycloak-data:
+  pgadmin-data:

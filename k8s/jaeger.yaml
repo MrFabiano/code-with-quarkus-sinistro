@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: seguros-jaeger
+  namespace: seguros
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: seguros-jaeger
+  template:
+    metadata:
+      labels:
+        app: seguros-jaeger
+    spec:
+      containers:
+        - name: jaeger
+          image: jaegertracing/all-in-one:latest
+          ports:
+            - containerPort: 16686
+            - containerPort: 4317
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "250m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: seguros-jaeger
+  namespace: seguros
+spec:
+  selector:
+    app: seguros-jaeger
+  ports:
+    - name: ui
+      port: 16686
+      targetPort: 16686
+    - name: otlp-grpc
+      port: 4317
+      targetPort: 4317
+  type: NodePort

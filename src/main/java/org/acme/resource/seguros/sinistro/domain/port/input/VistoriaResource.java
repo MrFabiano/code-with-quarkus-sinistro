@@ -1,4 +1,4 @@
-package org.acme.resource.seguros.sinistro.event;
+package org.acme.resource.seguros.sinistro.domain.port.input;
 
 import io.quarkus.security.Authenticated;
 import io.smallrye.common.annotation.RunOnVirtualThread;
@@ -17,6 +17,7 @@ import java.nio.file.Files;
 
 @Path("/api/v1/vistoria")
 @Authenticated
+
 public class VistoriaResource {
 
     @POST

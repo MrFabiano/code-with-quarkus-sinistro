@@ -1,13 +1,15 @@
-package org.acme.resource.seguros.sinistro.event;
+package org.acme.resource.seguros.sinistro.adapter.in.rest;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.smallrye.common.annotation.RunOnVirtualThread;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.MediaType;
-import org.acme.resource.seguros.sinistro.model.DTO.MensagemResponse;
-import org.acme.resource.seguros.sinistro.model.Sinistro;
-import org.acme.resource.seguros.sinistro.service.SinistroService;
+import org.acme.resource.seguros.sinistro.adapter.in.rest.dto.MensagemResponse;
+import org.acme.resource.seguros.sinistro.adapter.out.persistence.Sinistro;
+import org.acme.resource.seguros.sinistro.domain.service.SinistroService;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
 import java.util.List;
@@ -22,9 +24,11 @@ public class SinistroResource {
     SinistroService sinistroService;
 
     @POST
+    @Transactional
     @RunOnVirtualThread // Mantendo o uso de Virtual Threads do Java 21 para otimizar I/O
-    public Response criarSinistro(Sinistro sinistro) {
+    public Response criarSinistro(@Valid Sinistro sinistro) throws JsonProcessingException {
         // O service abstrai o processamento e devolve o 201 ou 202 direto
+
         return sinistroService.executarProcessamento(sinistro);
     }
 

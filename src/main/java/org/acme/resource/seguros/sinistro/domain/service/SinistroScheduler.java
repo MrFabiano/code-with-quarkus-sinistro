@@ -1,4 +1,4 @@
-package org.acme.resource.seguros.sinistro.service;
+package org.acme.resource.seguros.sinistro.domain.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
@@ -7,8 +7,8 @@ import io.quarkus.scheduler.Scheduled;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import org.acme.resource.seguros.sinistro.event.SinistroEvent;
-import org.acme.resource.seguros.sinistro.model.EventoPendente;
+import org.acme.resource.seguros.sinistro.domain.model.SinistroEvent;
+import org.acme.resource.seguros.sinistro.adapter.out.persistence.EventoPendente;
 import org.acme.resource.seguros.sinistro.producer.SinistroProducer;
 import org.jboss.logging.Logger;
 

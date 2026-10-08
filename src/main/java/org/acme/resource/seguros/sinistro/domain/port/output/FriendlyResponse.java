@@ -1,4 +1,4 @@
-package org.acme.resource.seguros.sinistro.producer;
+package org.acme.resource.seguros.sinistro.domain.port.output;
 
 public class FriendlyResponse {
 

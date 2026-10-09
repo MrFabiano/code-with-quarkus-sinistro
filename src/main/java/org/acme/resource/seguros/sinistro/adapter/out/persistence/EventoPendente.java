@@ -11,5 +11,6 @@ public class EventoPendente extends PanacheEntity{
     public String payloadJson;
     public LocalDateTime dataCriacao;
     public String motivoFalha;
+    public boolean processado = false;
 
 }

@@ -12,6 +12,7 @@ import org.eclipse.microprofile.reactive.messaging.Incoming;
 import org.eclipse.microprofile.reactive.messaging.Message;
 import org.jboss.logging.Logger;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 import java.util.concurrent.CompletionStage;
 
@@ -34,7 +35,9 @@ public class SinistroConsumer {
             SinistroEvent evento = objectMapper.readValue(payloadCru, SinistroEvent.class);
 
             // 2. Validação de dados de negócio (Payload Inválido)
-            if (evento.apoliceId() == null || evento.valorEstimado() == null || evento.valorEstimado() <= 0) {
+            if (evento.apoliceId() == null
+                    || evento.valorEstimado() == null
+                    || evento.valorEstimado().compareTo(BigDecimal.ZERO) <= 0) {
                 throw new IllegalArgumentException("Payload inválido: apoliceId ou valorEstimado ausentes/inválidos.");
             }
             // CHECAGEM DE IDEMPOTÊNCIA

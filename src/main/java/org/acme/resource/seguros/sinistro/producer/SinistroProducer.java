@@ -10,6 +10,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.eclipse.microprofile.reactive.messaging.Emitter;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @ApplicationScoped
@@ -35,7 +36,8 @@ public class SinistroProducer {
         if (evento.apoliceId() == null || evento.apoliceId().isEmpty()) {
             throw new IllegalArgumentException("Não pode publicar evento inválido");
         }
-        if (evento.valorEstimado() == null || evento.valorEstimado() <= 0) {
+        if (evento.valorEstimado() == null
+                || evento.valorEstimado().compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Não pode publicar evento inválido");
         }
 

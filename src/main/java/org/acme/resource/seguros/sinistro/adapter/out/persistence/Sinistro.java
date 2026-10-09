@@ -4,6 +4,7 @@ import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
@@ -29,13 +30,17 @@ public class Sinistro extends PanacheEntity {
 
     @NotBlank(message = "A descrição é obrigatória")
     @Column(nullable = false)
-    @Size(min = 6, message = "A descrição deve ter no mínimo 6 caracteres")  // ← ADICIONE ISTO
+    @Size(min = 6, message = "A descrição deve ter no mínimo 6 caracteres")
+    @Pattern(
+            regexp = ".*[a-zA-Zà-úÀ-Ú].*",
+            message = "A descrição deve conter pelo menos uma letra (texto válido)"
+    )
     public String descricao;
 
+    @Column(name = "valorestimado", nullable = false, precision = 10, scale = 2)
     @NotNull(message = "O valor estimado é obrigatório")
-    @Positive(message = "O valor estimado deve ser maior que zero")
-    @Column(name = "valorestimado", nullable = false)
-    public Double valorEstimado;
+    @DecimalMin(value = "0.01", message = "O valor estimado deve ser maior que zero")
+    public BigDecimal valorEstimado;
 
     public String status;
 

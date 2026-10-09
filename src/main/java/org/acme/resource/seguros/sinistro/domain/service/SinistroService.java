@@ -23,6 +23,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -88,16 +90,17 @@ public class SinistroService {
         }
 
         // Bloqueio 2: valorEstimado null
-        if (sinistro.valorEstimado == null) {
-            System.err.println("|| BLOCKED || valorEstimado nulo");
+        if (sinistro.valorEstimado.compareTo(BigDecimal.ZERO) <= 0) {
+            LOG.error("|| BLOCKED || valorEstimado inválido");
+            System.err.println("|| BLOCKED || valorEstimado negativo ou zero: " + sinistro.valorEstimado);
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(new FriendlyResponse("Erro de Validação",
-                            "O campo 'valorEstimado' é obrigatório."))
+                            "O campo 'valorEstimado' deve ser maior que zero."))
                     .build();
         }
 
-        // Bloqueio 3: valorEstimado negativo/zero
-        if (sinistro.valorEstimado <= 0) {
+        // Validação 1: valorEstimado > 0
+        if (sinistro.valorEstimado == null || sinistro.valorEstimado.compareTo(BigDecimal.ZERO) <= 0) {
             LOG.error("|| BLOCKED || valorEstimado inválido");
             System.err.println("|| BLOCKED || valorEstimado negativo ou zero: " + sinistro.valorEstimado);
             return Response.status(Response.Status.BAD_REQUEST)

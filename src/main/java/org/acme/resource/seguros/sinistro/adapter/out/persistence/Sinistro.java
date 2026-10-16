@@ -1,5 +1,6 @@
 package org.acme.resource.seguros.sinistro.adapter.out.persistence;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -11,6 +12,7 @@ import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.PrePersist;
+import org.acme.resource.seguros.sinistro.infrastructure.config.MoedaBigDecimalDeserializer;
 
 import java.util.UUID;
 
@@ -40,6 +42,7 @@ public class Sinistro extends PanacheEntity {
     @Column(name = "valorestimado", nullable = false, precision = 10, scale = 2)
     @NotNull(message = "O valor estimado é obrigatório")
     @DecimalMin(value = "0.01", message = "O valor estimado deve ser maior que zero")
+    @JsonDeserialize(using = MoedaBigDecimalDeserializer.class)
     public BigDecimal valorEstimado;
 
     public String status;

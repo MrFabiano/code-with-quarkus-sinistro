@@ -1,5 +1,6 @@
 package org.acme.resource.seguros.sinistro.adapter.in.rest;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import io.quarkus.panache.common.Parameters;
 import io.smallrye.common.annotation.RunOnVirtualThread;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -77,38 +78,33 @@ public class SinistroResource {
                         .entity(new MensagemResponse("O sinistro com o UUID '" + uuid + "' nao foi localizado."))
                         .build());
     }
-    // O método que será chamado se o Kafka falhar
-//    @Transactional
-//    public Response fallbackCriarSinistro(Sinistro sinistro) throws JsonProcessingException {
-//
-//        System.err.println("!!! FALLBACK ACIONADO: Kafka indisponível. Salvando no banco de dados...");
-//
-//        // Cria o registro de segurança
-//        EventoPendente pendente = new EventoPendente();
-//        pendente.payloadJson = objectMapper.writeValueAsString(sinistro); // Ou converta para JSON real
-//        pendente.dataCriacao = LocalDateTime.now();
-//        pendente.motivoFalha = "Kafka Producer Unreachable";
-//        pendente.persist();
-//
-//        return Response.status(Response.Status.ACCEPTED) // 202 Accepted indica que foi recebido, mas processamento posterior
-//                .entity("Sinistro registrado com sucesso, mas a notificação está pendente devido a instabilidade no sistema de eventos.")
-//                .build();
-//    }
 
     @DELETE
     @Path("/{uuid}")
     @Transactional
     @RunOnVirtualThread
-    public Response deletar(@PathParam("uuid") UUID uuid) {
-        long linhasDeletadas = Sinistro.delete("uuid", uuid);
+    public Response deletar(@PathParam("uuid") String uuidStr) {
 
-        if (linhasDeletadas > 0) {
-            return Response.ok(new MensagemResponse("Sinistro com o UUID '" + uuid + "' removido com sucesso."))
+        // Validação básica
+        if (uuidStr == null || uuidStr.isBlank()) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(new MensagemResponse("UUID não pode ser vazio"))
                     .build();
         }
 
-        return Response.status(Response.Status.NOT_FOUND)
-                .entity(new MensagemResponse("Falha na exclusao: O sinistro com o UUID '" + uuid + "' nao foi encontrado."))
+        // Busca o sinistro pelo campo uuid (String)
+        Sinistro sinistro = Sinistro.find("uuid", uuidStr).firstResult();
+
+        if (sinistro == null) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity(new MensagemResponse("Sinistro não encontrado com UUID: " + uuidStr))
+                    .build();
+        }
+
+        // Deletar pela entidade encontrada (funciona em 100% dos casos)
+        sinistro.delete();
+
+        return Response.noContent()
                 .build();
     }
 }

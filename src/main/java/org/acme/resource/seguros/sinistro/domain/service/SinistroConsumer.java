@@ -46,6 +46,7 @@ public class SinistroConsumer {
 //                    : UUID.fromString(evento.uuid().toString());
 
             boolean jaExiste = Sinistro.count("uuid", evento.uuid()) > 0;
+
             if (jaExiste) {
                 LOG.warnf("|| KAFKA CONSUMER || Evento descartado (já processado anteriormente). UUID: %s", evento.uuid());
                 return mensagem.ack(); // Confirma o ack sem duplicar no banco

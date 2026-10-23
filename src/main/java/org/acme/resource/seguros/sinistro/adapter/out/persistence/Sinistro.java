@@ -12,7 +12,9 @@ import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.PrePersist;
+import org.acme.resource.seguros.sinistro.domain.SinistroStatus;
 import org.acme.resource.seguros.sinistro.infrastructure.config.MoedaBigDecimalDeserializer;
+import org.acme.resource.seguros.sinistro.infrastructure.config.SinistroStatusDeserializer;
 
 import java.util.UUID;
 
@@ -45,7 +47,11 @@ public class Sinistro extends PanacheEntity {
     @JsonDeserialize(using = MoedaBigDecimalDeserializer.class)
     public BigDecimal valorEstimado;
 
-    public String status;
+    @NotNull(message = "O status é obrigatório")
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false, length = 20)
+    @JsonDeserialize(using = SinistroStatusDeserializer.class)
+    public SinistroStatus status;
 
     @PrePersist
     public void prePersist() {

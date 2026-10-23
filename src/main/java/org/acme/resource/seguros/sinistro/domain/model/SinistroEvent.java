@@ -2,6 +2,7 @@ package org.acme.resource.seguros.sinistro.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.acme.resource.seguros.sinistro.domain.SinistroStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -13,7 +14,7 @@ public record SinistroEvent(
         String apoliceId,
         String descricao,
         BigDecimal valorEstimado,
-        String status,
+        SinistroStatus status,
         @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
         LocalDateTime dataHora  // <-- 7º argumento
 ) {}

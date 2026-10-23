@@ -7,11 +7,13 @@ import jakarta.ws.rs.WebApplicationException;
 import org.acme.resource.seguros.sinistro.adapter.in.rest.dto.SinistroPayload;
 import org.acme.resource.seguros.sinistro.domain.model.SinistroEvent;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.eclipse.microprofile.faulttolerance.Retry;
 import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.eclipse.microprofile.reactive.messaging.Emitter;
 
 import java.math.BigDecimal;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @ApplicationScoped
 public class SinistroProducer {
@@ -23,6 +25,7 @@ public class SinistroProducer {
     @Inject
     @Channel("seguros-sinistros-out")
     Emitter<SinistroEvent> emitter;
+    @Retry(maxRetries = 2, delay = 500)
     public void publicar(SinistroEvent evento) {
         System.out.println("--- [PRODUCER] simularFalha = " + simularFalha);
 
@@ -40,9 +43,16 @@ public class SinistroProducer {
                 || evento.valorEstimado().compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Não pode publicar evento inválido");
         }
-
-        emitter.send(evento)
-                .toCompletableFuture()
-                .join();
+        // ESPERAR O ENVIO COMPLETAR E CAPTURAR EVENTUAIS ERROS
+        try {
+            // Força a espera da entrega com timeout rigoroso
+            emitter.send(evento)
+                    .toCompletableFuture()
+                    .orTimeout(8000, TimeUnit.MILLISECONDS) // Força o estouro em 2 segundos se o Kafka estiver fora
+                    .join();
+        } catch (Exception e) {
+            // Lança exceção em linha para obrigar o Service a acionar o @Fallback
+            throw new RuntimeException("Falha ao comunicar com o Kafka: " + e.getMessage(), e);
+        }
     }
 }

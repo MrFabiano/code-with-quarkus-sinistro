@@ -10,6 +10,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.MediaType;
 import org.acme.resource.seguros.sinistro.adapter.in.rest.dto.MensagemResponse;
 import org.acme.resource.seguros.sinistro.adapter.out.persistence.Sinistro;
+import org.acme.resource.seguros.sinistro.domain.SinistroStatus;
 import org.acme.resource.seguros.sinistro.domain.service.SinistroService;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
@@ -25,7 +26,6 @@ public class SinistroResource {
     SinistroService sinistroService;
 
     @POST
-    @Transactional
     @RunOnVirtualThread // Mantendo o uso de Virtual Threads do Java 21 para otimizar I/O
     public Response criarSinistro(@Valid Sinistro sinistro) throws JsonProcessingException {
         // O service abstrai o processamento e devolve o 201 ou 202 direto
@@ -37,19 +37,39 @@ public class SinistroResource {
     @Path("/{uuid}")
     @Transactional
     @RunOnVirtualThread
-    public Response atualizar(@PathParam("uuid") UUID uuid, Sinistro dadosAtualizados) {
-        return Sinistro.<Sinistro>find("uuid", uuid)
-                .singleResultOptional()
-                .map(sinistroExistente -> {
-                    sinistroExistente.apoliceId = dadosAtualizados.apoliceId;
-                    sinistroExistente.descricao = dadosAtualizados.descricao;
-                    sinistroExistente.valorEstimado = dadosAtualizados.valorEstimado;
-                    sinistroExistente.status = dadosAtualizados.status;
-                    return Response.ok(sinistroExistente).build();
-                })
-                .orElse(Response.status(Response.Status.NOT_FOUND)
-                        .entity(new MensagemResponse("Falha na atualizacao: Nao existe nenhum sinistro com o UUID '" + uuid + "'."))
-                        .build());
+    public Response atualizar(@PathParam("uuid") String uuidStr,  @Valid Sinistro dadosAtualizados) {
+
+        if (uuidStr == null || uuidStr.isBlank()) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(new MensagemResponse("UUID não pode ser vazio"))
+                    .build();
+        }
+
+        // firstResult() evita NonUniqueResultException
+        Sinistro sinistro = Sinistro.find("uuid = ?1", uuidStr).firstResult();
+
+        if (sinistro == null) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity(new MensagemResponse("Sinistro não encontrado com UUID: " + uuidStr))
+                    .build();
+        }
+        SinistroStatus novoStatus = dadosAtualizados.status;
+        SinistroStatus statusAtual = sinistro.status;
+
+        if (novoStatus == SinistroStatus.FECHADO && statusAtual == SinistroStatus.FECHADO) {
+            return Response.status(Response.Status.CONFLICT)
+                    .entity(new MensagemResponse("Sinistro já está fechado."))
+                    .build();
+        }
+
+
+        // Atualiza os campos
+        sinistro.apoliceId = dadosAtualizados.apoliceId;
+        sinistro.descricao = dadosAtualizados.descricao;
+        sinistro.valorEstimado = dadosAtualizados.valorEstimado;
+        sinistro.status = novoStatus;
+
+        return Response.ok(sinistro).build();
     }
 
     @GET
@@ -70,13 +90,24 @@ public class SinistroResource {
     @GET
     @Path("/{uuid}")
     @RunOnVirtualThread
-    public Response buscarPorUuid(@PathParam("uuid") UUID uuid) {
-        return Sinistro.<Sinistro>find("uuid", uuid)
-                .singleResultOptional()
-                .map(sinistro -> Response.ok(sinistro).build())
-                .orElse(Response.status(Response.Status.NOT_FOUND)
-                        .entity(new MensagemResponse("O sinistro com o UUID '" + uuid + "' nao foi localizado."))
-                        .build());
+    public Response buscarPorUuid(@PathParam("uuid") String uuidStr) {
+
+        if (uuidStr == null || uuidStr.isBlank()) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(new MensagemResponse("UUID não pode ser vazio"))
+                    .build();
+        }
+
+        // firstResult() não lança NonUniqueResultException se houver duplicatas
+        Sinistro sinistro = Sinistro.find("uuid = ?1", uuidStr).firstResult();
+
+        if (sinistro == null) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity(new MensagemResponse("O sinistro com o UUID '" + uuidStr + "' não foi localizado."))
+                    .build();
+        }
+
+        return Response.ok(sinistro).build();
     }
 
     @DELETE

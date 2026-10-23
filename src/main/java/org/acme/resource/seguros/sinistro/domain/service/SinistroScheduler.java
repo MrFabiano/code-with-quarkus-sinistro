@@ -1,23 +1,23 @@
 package org.acme.resource.seguros.sinistro.domain.service;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
 import io.quarkus.scheduler.Scheduled;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
-import org.acme.resource.seguros.sinistro.domain.model.SinistroEvent;
 import org.acme.resource.seguros.sinistro.adapter.out.persistence.EventoPendente;
+import org.acme.resource.seguros.sinistro.domain.model.SinistroEvent;
 import org.acme.resource.seguros.sinistro.producer.SinistroProducer;
+import org.acme.resource.seguros.sinistro.repository.ContingenciaRepository;
 import org.jboss.logging.Logger;
 
+
+import java.time.Duration;
 import java.util.List;
+
 @ApplicationScoped
 public class SinistroScheduler {
 
-    @Inject
-    Logger log;
+    private static final Logger LOG = Logger.getLogger(SinistroScheduler.class);
 
     @Inject
     SinistroProducer producer;
@@ -25,36 +25,37 @@ public class SinistroScheduler {
     @Inject
     ObjectMapper objectMapper;
 
+    @Inject
+    ContingenciaRepository contingenciaRepository;
+
     @Scheduled(every = "1m")
-    @Transactional
     public void processarPendencias() {
-        // Paginação limitando a 100 registros por execução para controle de heap
-        PanacheQuery<EventoPendente> query = EventoPendente.findAll().page(Page.ofSize(100));
-        List<EventoPendente> pendentes = query.list();
+        List<EventoPendente> pendentes = EventoPendente.findAll().page(Page.ofSize(100)).list();
+        if (pendentes.isEmpty()) return;
 
-        if (pendentes.isEmpty()) {
-            return;
-        }
+        LOG.infof("|| SCHEDULER || Iniciando reprocessamento de %d eventos...", pendentes.size());
 
-        log.infof("|| SCHEDULER || Iniciando reprocessamento de %d eventos pendentes...", pendentes.size());
+        for (EventoPendente p : pendentes) {
+            Long id = p.id;
+            String payload = p.payloadJson;
 
-        for (EventoPendente pendencia : pendentes) {
+            SinistroEvent evento;
             try {
-                // Acesso direto ao atributo público payloadJson (Padrão Panache Active Record)
-                SinistroEvent evento = objectMapper.readValue(pendencia.payloadJson, SinistroEvent.class);
-
-                // Tenta enviar para o broker do Kafka
-                producer.publicar(evento);
-
-                // Remove do banco de dados em caso de sucesso
-                pendencia.delete();
-
-                log.infof("|| SCHEDULER || Evento ID %d reenviado e removido da contingencia.", pendencia.id);
-
+                evento = objectMapper.readValue(payload, SinistroEvent.class);
             } catch (Exception e) {
-                // Captura falhas individuais (ex: JSON corrompido ou Kafka ainda fora) sem quebrar o lote
-                log.errorf("|| SCHEDULER || Falha ao reenviar evento ID %d. Motivo: %s", pendencia.id, e.getMessage());
+                LOG.errorf("|| SCHEDULER || Payload corrompido no ID %d: %s", id, e.getMessage());
+                continue;
             }
+
+            try {
+                producer.publicar(evento);        // fora de transação
+            } catch (Exception e) {
+                LOG.errorf("|| SCHEDULER || Kafka fora, abortando lote: %s", e.getMessage());
+                break;                            // não insiste nos outros 99
+            }
+
+            contingenciaRepository.remover(id);   // transação curta
+            LOG.infof("|| SCHEDULER || Evento ID %d reenviado e removido.", id);
         }
     }
 }

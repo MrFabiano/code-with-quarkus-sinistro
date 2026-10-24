@@ -25,6 +25,7 @@ public class SinistroProducer {
     @Inject
     @Channel("seguros-sinistros-out")
     Emitter<SinistroEvent> emitter;
+
     @Retry(maxRetries = 2, delay = 500)
     public void publicar(SinistroEvent evento) {
         System.out.println("--- [PRODUCER] simularFalha = " + simularFalha);

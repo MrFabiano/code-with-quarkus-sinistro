@@ -70,8 +70,6 @@ public class SinistroService {
         counterFallback = Counter.builder("sinistro_fallback_total").register(meterRegistry);
     }
 
-    @Retry(maxRetries = 2, delay = 500)
-    @CircuitBreaker(requestVolumeThreshold = 4, failureRatio = 0.5, delay = 5000)
     @Fallback(fallbackMethod = "tratarContingencia")
     public Response executarProcessamento(Sinistro sinistro) throws JsonProcessingException {
         LOG.info("|| SERVICE RECEBEU || apoliceId={}", sinistro.apoliceId);

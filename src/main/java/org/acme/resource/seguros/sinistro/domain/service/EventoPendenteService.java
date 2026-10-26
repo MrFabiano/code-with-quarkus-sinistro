@@ -17,13 +17,12 @@ public class EventoPendenteService {
     @Transactional(Transactional.TxType.REQUIRES_NEW)
     public void marcarComoRejeitado(Long id, String motivo) {
         EventoPendente e = EventoPendente.findById(id);
-        if (e == null) {
-            return;
-        }
+        if (e == null) return;
+
         e.status = "REJEITADO";
-        e.motivoFalha = motivo;
+        // preserva a causa original, registra a rejeição à parte
+        e.motivoFalha = e.motivoFalha + " | REJEITADO: " + motivo;
         e.dataRejeicao = LocalDateTime.now();
-        e.processado = false;
         e.persist();
     }
 }

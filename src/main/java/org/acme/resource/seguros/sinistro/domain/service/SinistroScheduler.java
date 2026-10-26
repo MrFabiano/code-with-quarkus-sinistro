@@ -82,13 +82,15 @@ public class SinistroScheduler {
     }
 
     private void rejeitar(EventoPendente evento, String razao) {
-        String motivo = "Payload inválido: " + razao;
+        String tipoErro = extrairTipoErro(razao);
+        String motivo = "REJEITADO: " + tipoErro;
+
         if (motivo.length() > 240) {
             motivo = motivo.substring(0, 237) + "...";
         }
 
         eventoPendenteService.marcarComoRejeitado(evento.id, motivo);
-        enviarParaDLQ(evento, motivo);
+        enviarParaDLQ(evento, razao);  // ← na DLQ, mantém o motivo completo original
 
         LOG.errorf("|| SCHEDULER || Evento ID %d REJEITADO (erro permanente): %s",
                 evento.id, razao);
@@ -129,5 +131,37 @@ public class SinistroScheduler {
                     evento.id, e.getMessage());
             // o registro já está REJEITADO no banco; a DLQ é complementar
         }
+    }
+
+    private String extrairTipoErro(String razao) {
+        if (razao == null) return "Erro desconhecido";
+
+        // JSON malformado
+        if (razao.contains("JsonProcessingException") ||
+                razao.contains("JsonParseException")) {
+            return "Payload JSON malformado";
+        }
+
+        // Campo obrigatório ausente
+        if (razao.contains("apoliceId é obrigatório")) {
+            return "Payload inválido (apoliceId obrigatório)";
+        }
+        if (razao.contains("valorEstimado deve ser maior que zero")) {
+            return "Payload inválido (valorEstimado inválido)";
+        }
+        if (razao.contains("descricao é obrigatória")) {
+            return "Payload inválido (descricao obrigatória)";
+        }
+
+        // Outros erros de validação genéricos
+        if (razao.contains("é obrigatório")) {
+            return "Payload inválido (" +
+                    razao.split(" ")[0] + " obrigatório)";
+        }
+
+        // Erro não categorizado — retorna mensagem limpa
+        return razao.length() > 60 ?
+                razao.substring(0, 57) + "..." :
+                razao;
     }
 }

@@ -1,6 +1,7 @@
 package org.acme.resource.seguros.sinistro.adapter.out.persistence;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
+import io.quarkus.scheduler.Scheduled;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 
@@ -25,4 +26,11 @@ public class EventoPendente extends PanacheEntity {
     public String status = "PENDENTE";          // PENDENTE | REJEITADO
 
     public LocalDateTime dataRejeicao;
+
+    @Scheduled(every = "1m")
+    public void reprocessarEventosPendentes() {
+        // Distingue erro transitório (Kafka fora) de permanente (payload inválido)
+        // Transitório → mantém PENDENTE → tenta de novo
+        // Permanente → REJEITADO → DLQ → para de tentar
+    }
 }

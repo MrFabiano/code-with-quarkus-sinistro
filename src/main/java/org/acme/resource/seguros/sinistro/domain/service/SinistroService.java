@@ -1,151 +1,172 @@
 package org.acme.resource.seguros.sinistro.domain.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.quarkus.runtime.StartupEvent;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import jakarta.ws.rs.core.Response;
 import org.acme.resource.seguros.sinistro.adapter.in.rest.CamelRouterClient;
 import org.acme.resource.seguros.sinistro.adapter.in.rest.dto.ContingenciaResponseDTO;
-import org.acme.resource.seguros.sinistro.adapter.in.rest.dto.SinistroPayload;
+import org.acme.resource.seguros.sinistro.api.request.SinistroRequest;
+import org.acme.resource.seguros.sinistro.api.request.SinistroUpdateRequest;
+import org.acme.resource.seguros.sinistro.api.response.SinistroResponse;
 import org.acme.resource.seguros.sinistro.domain.SinistroStatus;
-import org.acme.resource.seguros.sinistro.domain.model.SinistroEvent;
-import org.acme.resource.seguros.sinistro.adapter.out.persistence.EventoPendente;
 import org.acme.resource.seguros.sinistro.adapter.out.persistence.Sinistro;
-import org.acme.resource.seguros.sinistro.domain.port.output.FriendlyResponse;
+import org.acme.resource.seguros.sinistro.exception.ContingenciaIndisponivelException;
+import org.acme.resource.seguros.sinistro.exception.SinistroJaFechadoException;
+import org.acme.resource.seguros.sinistro.exception.SinistroNaoEncontradoException;
+import org.acme.resource.seguros.sinistro.domain.mapper.SinistroMapper;
 import org.acme.resource.seguros.sinistro.producer.SinistroProducer;
-import org.eclipse.microprofile.faulttolerance.CircuitBreaker;
-import org.eclipse.microprofile.faulttolerance.Fallback;
-import org.eclipse.microprofile.faulttolerance.Retry;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.UUID;
+import java.util.List;
 
 import static io.smallrye.jwt.config.ConfigLogging.log;
 
-
 @ApplicationScoped
 public class SinistroService {
+
     private static final Logger LOG = LoggerFactory.getLogger(SinistroService.class);
 
-    @Inject
-    SinistroProducer producer;
+    @Inject SinistroMapper mapper;
+    @Inject SinistroPersistence persistence;
+    @Inject SinistroProducer producer;
+    @Inject ContingenciaLocalService contingenciaLocalService;
+    @Inject MeterRegistry meterRegistry;
 
     @Inject
     @RestClient
     CamelRouterClient camelRouterClient;
 
-    @Inject
-    MeterRegistry meterRegistry;
-
-    @Inject
-    ContingenciaLocalService contingenciaLocalService;
-
-    @Inject
-    SinistroPersistence persistence;
-
-    private Counter counterValidacoesBlok;
     private Counter counterSucesso;
     private Counter counterFallback;
 
-    void onStart(@Observes StartupEvent ev) {
-        LOG.info("|| BUILD MARKER || versao=2026-10-22-20h30");
-    }
-
     @PostConstruct
-    public void init() {
-        LOG.info("|| INIT counters ||");
-        counterValidacoesBlok = Counter.builder("sinistro_validacoes_bloqueadas_total").register(meterRegistry);
+    void init() {
         counterSucesso = Counter.builder("sinistro_sucesso_total").register(meterRegistry);
         counterFallback = Counter.builder("sinistro_fallback_total").register(meterRegistry);
     }
 
-    @Fallback(fallbackMethod = "tratarContingencia")
-    public Response executarProcessamento(Sinistro sinistro) throws JsonProcessingException {
-        LOG.info("|| SERVICE RECEBEU || apoliceId={}", sinistro.apoliceId);
+    // ---------------------------------------------------------------
+    // CRIAÇÃO
+    // ---------------------------------------------------------------
+//    public ResultadoCriacao criar(SinistroRequest request) {
+//        log.infof("|| SERVICE RECEBEU || apoliceId=%s", request.apoliceId());
+//
+//        // 1. Persiste localmente antes do Kafka (REQUIRES_NEW, já com uuid e status ABERTO)
+//        Sinistro sinistro = mapper.toEntity(request);
+//        persistence.salvar(sinistro);
+//
+//        // 2. Publica no Kafka (o @Retry está no producer)
+//        try {
+//            producer.publicar(mapper.toEvent(sinistro));
+//            counterSucesso.increment();
+//            return new ResultadoCriacao.Criado(mapper.toResponse(sinistro));
+//        } catch (Exception e) {
+//            return tratarContingencia(sinistro, e);
+//        }
+//    }
+    public ResultadoCriacao criar(SinistroRequest request) {
+        log.infof("|| SERVICE RECEBEU || apoliceId=%s", request.apoliceId());
 
-        // Validações de payload (Retornam 400 se falhar)
-        if (sinistro.apoliceId == null || sinistro.apoliceId.trim().isEmpty()) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(new FriendlyResponse("Erro de Validação", "O campo 'apoliceId' é obrigatório."))
-                    .build();
-        }
-
-        if (sinistro.valorEstimado == null || sinistro.valorEstimado.compareTo(BigDecimal.ZERO) <= 0) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(new FriendlyResponse("Erro de Validação", "O campo 'valorEstimado' deve ser maior que zero."))
-                    .build();
-        }
-
-        if (sinistro.descricao == null || sinistro.descricao.trim().isEmpty()) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(new FriendlyResponse("Erro de Validação", "O campo 'descricao' é obrigatório."))
-                    .build();
-        }
-
-        // Persistência local (Grava no Postgres antes do Kafka)
-        persistence.salvar(sinistro);
-
-        // Tenta publicar no Kafka. Se falhar, estoura a exceção para acionar @Retry e @Fallback
-        producer.publicar(toSinistroEvent(sinistro));
-
-        counterSucesso.increment();
-        return Response.status(201).entity(sinistro).build();
-    }
-
-    // Método de Fallback invocado automaticamente quando o Retry/CircuitBreaker esgota
-    public Response tratarContingencia(Sinistro sinistro, Throwable causa) {
-        log.warnf("!!! FALLBACK ACIONADO !!! Motivo: %s", causa != null ? causa.getMessage() : "Desconhecido");
-
-        String motivoFalha = "Kafka e Camel Router indisponíveis: " + (causa != null ? causa.getMessage() : "Erro desconhecido");
-
-        // 1. Tenta acionar o Camel Router via REST Client
+        Sinistro sinistro = mapper.toEntity(request);
         try {
-            ContingenciaResponseDTO response = camelRouterClient.enviarContingencia(toSinistroPayload(sinistro));
-            if (response != null && "processed".equalsIgnoreCase(response.status())) {
-                return Response.status(Response.Status.ACCEPTED)
-                        .entity(new FriendlyResponse("Contingência", "Processado via Camel Router"))
-                        .build();
+            persistence.salvar(sinistro);
+        } catch (Exception e) {
+            LOG.error("Falha ao persistir sinistro", e);
+            throw new ContingenciaIndisponivelException(
+                    "Não foi possível registrar o sinistro. Tente novamente.", e);
+        }
+
+        try {
+            producer.publicar(mapper.toEvent(sinistro));
+            counterSucesso.increment();
+            return new ResultadoCriacao.Criado(mapper.toResponse(sinistro));
+        } catch (Exception e) {
+            return tratarContingencia(sinistro, e);
+        }
+    }
+    // ---------------------------------------------------------------
+    // CONTINGÊNCIA: Camel Router -> banco local
+    // ---------------------------------------------------------------
+    private ResultadoCriacao tratarContingencia(Sinistro sinistro, Throwable causa) {
+        counterFallback.increment();
+        String causaMsg = causa != null ? causa.getMessage() : "Erro desconhecido";
+        log.warnf("!!! FALLBACK ACIONADO !!! Motivo: %s", causaMsg);
+
+        // 1. Tenta o Camel Router
+        try {
+            ContingenciaResponseDTO resp =
+                    camelRouterClient.enviarContingencia(mapper.toPayload(sinistro));
+
+            if (resp != null && "processed".equalsIgnoreCase(resp.status())) {
+                return new ResultadoCriacao.EmContingencia("Processado via Camel Router");
             }
         } catch (Exception e) {
             LOG.error("Camel Router indisponível. Gravando contingência localmente...", e);
         }
 
-        // 2. Grava localmente no Postgres (tabela evento_pendente)
+        // 2. Grava localmente em EventoPendente (o scheduler reprocessa depois)
+        String motivoFalha = "Kafka e Camel Router indisponíveis: " + causaMsg;
         try {
             contingenciaLocalService.gravarContingencia(sinistro, motivoFalha);
         } catch (Exception e) {
             LOG.error("Falha ao gravar contingência local", e);
+            throw new ContingenciaIndisponivelException(
+                    "Não foi possível registrar o evento.", e);
         }
 
-        // 3. Retorna 202 Accepted explicitamente sem deixar nenhuma exceção subir
-        return Response.status(Response.Status.ACCEPTED)
-                .entity(new FriendlyResponse("Contingência Local", "Evento registrado com sucesso na fila de pendências."))
-                .build();
-    }
-    private SinistroEvent toSinistroEvent(Sinistro sinistro) {
-        return new SinistroEvent(
-                sinistro.uuid,
-                "SINISTRO_CRIADO",
-                sinistro.apoliceId,
-                sinistro.descricao,
-                sinistro.valorEstimado,
-                sinistro.status,
-                LocalDateTime.now()
-        );
+        return new ResultadoCriacao.EmContingencia(
+                "Evento registrado com sucesso na fila de pendências.");
     }
 
-    private SinistroPayload toSinistroPayload(Sinistro sinistro) {
-        return new SinistroPayload(sinistro.uuid, sinistro.apoliceId, sinistro.valorEstimado);
+    // ---------------------------------------------------------------
+    // CONSULTAS
+    // ---------------------------------------------------------------
+    public List<SinistroResponse> listarTodos() {
+        return mapper.toResponseList(Sinistro.listAll());
+    }
+
+    public SinistroResponse buscarPorUuid(String uuid) {
+        return mapper.toResponse(buscarEntidade(uuid));
+    }
+
+    // ---------------------------------------------------------------
+    // ATUALIZAÇÃO
+    // ---------------------------------------------------------------
+    @Transactional
+    public SinistroResponse atualizar(String uuid, SinistroUpdateRequest request) {
+        Sinistro sinistro = buscarEntidade(uuid);
+
+        if (request.status() == SinistroStatus.FECHADO
+                && sinistro.status == SinistroStatus.FECHADO) {
+            throw new SinistroJaFechadoException();
+        }
+
+        mapper.updateEntity(request, sinistro);   // entidade gerenciada: o flush acontece no commit
+        return mapper.toResponse(sinistro);
+    }
+
+    // ---------------------------------------------------------------
+    // EXCLUSÃO
+    // ---------------------------------------------------------------
+    @Transactional
+    public void deletar(String uuid) {
+        buscarEntidade(uuid).delete();
+    }
+
+    // ---------------------------------------------------------------
+    private Sinistro buscarEntidade(String uuid) {
+        if (uuid == null || uuid.isBlank()) {
+            throw new IllegalArgumentException("UUID não pode ser vazio");
+        }
+        Sinistro sinistro = Sinistro.find("uuid", uuid).firstResult();
+        if (sinistro == null) {
+            throw new SinistroNaoEncontradoException(uuid);
+        }
+        return sinistro;
     }
 }

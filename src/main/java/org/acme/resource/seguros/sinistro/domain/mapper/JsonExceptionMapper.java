@@ -1,4 +1,4 @@
-package org.acme.resource.seguros.sinistro.infrastructure.config;
+package org.acme.resource.seguros.sinistro.domain.mapper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.ws.rs.core.Response;

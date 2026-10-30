@@ -1,5 +1,6 @@
 package org.acme.resource.seguros.sinistro.infrastructure.health;
 
+import io.quarkus.narayana.jta.QuarkusTransaction;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.acme.resource.seguros.sinistro.adapter.out.persistence.EventoPendente;
 import org.eclipse.microprofile.health.HealthCheck;
@@ -10,28 +11,17 @@ import org.eclipse.microprofile.health.Readiness;
 @Readiness
 public class ContingenciaHealthCheck implements HealthCheck {
 
-    private static final int THRESHOLD_PENDENCIAS = 100;
+    private static final long THRESHOLD = 100;
 
     @Override
     public HealthCheckResponse call() {
-        long pendentes = EventoPendente.count();
+        long pendentes = QuarkusTransaction.requiringNew()
+                .call(() -> EventoPendente.count("status = ?1 and processado = false", "PENDENTE"));
 
-        if (pendentes > THRESHOLD_PENDENCIAS) {
-            return HealthCheckResponse
-                    .named("Eventos Pendentes (Contingência)")
-                    .down()
-                    .withData("count", String.valueOf(pendentes))
-                    .withData("threshold", String.valueOf(THRESHOLD_PENDENCIAS))
-                    .withData("status", "HIGH")
-                    .build();
-        }
-
-        return HealthCheckResponse
-                .named("Eventos Pendentes (Contingência)")
-                .up()
-                .withData("count", String.valueOf(pendentes))
-                .withData("threshold", String.valueOf(THRESHOLD_PENDENCIAS))
-                .withData("status", "NORMAL")
+        return HealthCheckResponse.named("Eventos Pendentes")
+                .status(pendentes <= THRESHOLD)
+                .withData("count", pendentes)
+                .withData("threshold", THRESHOLD)
                 .build();
     }
 }

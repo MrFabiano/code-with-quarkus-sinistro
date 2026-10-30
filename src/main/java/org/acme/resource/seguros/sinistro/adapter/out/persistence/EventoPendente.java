@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
 @Entity
 public class EventoPendente extends PanacheEntity {
 
+    @Column(nullable = false, unique = true)
+    public String uuid;
 
     @Column(columnDefinition = "text")          // payload pode ser grande
     public String payloadJson;
@@ -27,10 +29,4 @@ public class EventoPendente extends PanacheEntity {
 
     public LocalDateTime dataRejeicao;
 
-    @Scheduled(every = "1m")
-    public void reprocessarEventosPendentes() {
-        // Distingue erro transitório (Kafka fora) de permanente (payload inválido)
-        // Transitório → mantém PENDENTE → tenta de novo
-        // Permanente → REJEITADO → DLQ → para de tentar
-    }
 }

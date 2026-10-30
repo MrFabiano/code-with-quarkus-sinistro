@@ -1,4 +1,4 @@
-package org.acme.resource.seguros.sinistro.infrastructure.config;
+package org.acme.resource.seguros.sinistro.domain.mapper;
 
 import jakarta.ws.rs.core.Response;
 import org.acme.resource.seguros.sinistro.adapter.in.rest.dto.MensagemResponse;

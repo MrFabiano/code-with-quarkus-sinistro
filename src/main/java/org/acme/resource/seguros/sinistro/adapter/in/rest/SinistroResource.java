@@ -1,141 +1,69 @@
 package org.acme.resource.seguros.sinistro.adapter.in.rest;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import io.quarkus.panache.common.Parameters;
+
 import io.smallrye.common.annotation.RunOnVirtualThread;
 import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import org.acme.resource.seguros.sinistro.adapter.in.rest.dto.MensagemResponse;
-import org.acme.resource.seguros.sinistro.adapter.out.persistence.Sinistro;
-import org.acme.resource.seguros.sinistro.domain.SinistroStatus;
+import org.acme.resource.seguros.sinistro.api.request.SinistroRequest;
+import org.acme.resource.seguros.sinistro.api.request.SinistroUpdateRequest;
+import org.acme.resource.seguros.sinistro.api.response.*;
+import org.acme.resource.seguros.sinistro.domain.service.ResultadoCriacao;
 import org.acme.resource.seguros.sinistro.domain.service.SinistroService;
 import jakarta.ws.rs.*;
-import jakarta.ws.rs.core.Response;
+
 import java.util.List;
-import java.util.UUID;
+
+import org.jboss.resteasy.reactive.RestResponse;
 
 @Path("/api/v1/sinistros")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class SinistroResource {
 
-    @Inject
-    SinistroService sinistroService;
+    @Inject SinistroService service;
 
     @POST
-    @RunOnVirtualThread // Mantendo o uso de Virtual Threads do Java 21 para otimizar I/O
-    public Response criarSinistro(@Valid Sinistro sinistro) throws JsonProcessingException {
-        // O service abstrai o processamento e devolve o 201 ou 202 direto
-
-        return sinistroService.executarProcessamento(sinistro);
-    }
-
-    @PUT
-    @Path("/{uuid}")
-    @Transactional
     @RunOnVirtualThread
-    public Response atualizar(@PathParam("uuid") String uuidStr,  @Valid Sinistro dadosAtualizados) {
-
-        if (uuidStr == null || uuidStr.isBlank()) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(new MensagemResponse("UUID não pode ser vazio"))
-                    .build();
-        }
-
-        // firstResult() evita NonUniqueResultException
-        Sinistro sinistro = Sinistro.find("uuid = ?1", uuidStr).firstResult();
-
-        if (sinistro == null) {
-            return Response.status(Response.Status.NOT_FOUND)
-                    .entity(new MensagemResponse("Sinistro não encontrado com UUID: " + uuidStr))
-                    .build();
-        }
-        SinistroStatus novoStatus = dadosAtualizados.status;
-        SinistroStatus statusAtual = sinistro.status;
-
-        if (novoStatus == SinistroStatus.FECHADO && statusAtual == SinistroStatus.FECHADO) {
-            return Response.status(Response.Status.CONFLICT)
-                    .entity(new MensagemResponse("Sinistro já está fechado."))
-                    .build();
-        }
-
-
-        // Atualiza os campos
-        sinistro.apoliceId = dadosAtualizados.apoliceId;
-        sinistro.descricao = dadosAtualizados.descricao;
-        sinistro.valorEstimado = dadosAtualizados.valorEstimado;
-        sinistro.status = novoStatus;
-
-        return Response.ok(sinistro).build();
+    public RestResponse<Object> criar(@Valid SinistroRequest request) {
+        return switch (service.criar(request)) {
+            case ResultadoCriacao.Criado c ->
+                    RestResponse.status(Response.Status.CREATED, c.sinistro());
+            case ResultadoCriacao.EmContingencia c ->
+                    RestResponse.status(Response.Status.ACCEPTED, new MensagemResponse(c.mensagem()));
+        };
     }
 
     @GET
     @RunOnVirtualThread // Mantendo a alta performance com Java 21
-    public Response listarTudo() {
+    public List<SinistroResponse> listarTudo() {
         // O Panache traz todos os registros do Postgres em uma única linha
-        List<Sinistro> sinistros = Sinistro.listAll();
-
-        if (sinistros.isEmpty()) {
-            return Response.status(Response.Status.OK)
-                    .entity(new MensagemResponse("Nenhum sinistro cadastrado ate o momento."))
-                    .build();
-        }
-
-        return Response.ok(sinistros).build();
+        return service.listarTodos();
     }
 
     @GET
     @Path("/{uuid}")
     @RunOnVirtualThread
-    public Response buscarPorUuid(@PathParam("uuid") String uuidStr) {
+    public SinistroResponse buscar(@PathParam("uuid") String uuid) {
+        return service.buscarPorUuid(uuid);   // lança SinistroNaoEncontradoException
+    }
 
-        if (uuidStr == null || uuidStr.isBlank()) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(new MensagemResponse("UUID não pode ser vazio"))
-                    .build();
-        }
-
-        // firstResult() não lança NonUniqueResultException se houver duplicatas
-        Sinistro sinistro = Sinistro.find("uuid = ?1", uuidStr).firstResult();
-
-        if (sinistro == null) {
-            return Response.status(Response.Status.NOT_FOUND)
-                    .entity(new MensagemResponse("O sinistro com o UUID '" + uuidStr + "' não foi localizado."))
-                    .build();
-        }
-
-        return Response.ok(sinistro).build();
+    @PUT
+    @Path("/{uuid}")
+    @RunOnVirtualThread
+    public SinistroResponse atualizar(@PathParam("uuid") String uuid,
+                                      @Valid SinistroUpdateRequest request) {
+        return service.atualizar(uuid, request);
     }
 
     @DELETE
     @Path("/{uuid}")
-    @Transactional
     @RunOnVirtualThread
-    public Response deletar(@PathParam("uuid") String uuidStr) {
-
-        // Validação básica
-        if (uuidStr == null || uuidStr.isBlank()) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(new MensagemResponse("UUID não pode ser vazio"))
-                    .build();
-        }
-
-        // Busca o sinistro pelo campo uuid (String)
-        Sinistro sinistro = Sinistro.find("uuid", uuidStr).firstResult();
-
-        if (sinistro == null) {
-            return Response.status(Response.Status.NOT_FOUND)
-                    .entity(new MensagemResponse("Sinistro não encontrado com UUID: " + uuidStr))
-                    .build();
-        }
-
-        // Deletar pela entidade encontrada (funciona em 100% dos casos)
-        sinistro.delete();
-
-        return Response.noContent()
-                .build();
+    public RestResponse<Void> deletar(@PathParam("uuid") String uuid) {
+        service.deletar(uuid);
+        return RestResponse.noContent();
     }
 }

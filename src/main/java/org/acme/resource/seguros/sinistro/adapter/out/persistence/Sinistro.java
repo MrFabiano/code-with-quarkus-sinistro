@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
@@ -52,6 +53,7 @@ public class Sinistro extends PanacheEntity {
     @Column(name = "status", nullable = false, length = 20)
     @JsonDeserialize(using = SinistroStatusDeserializer.class)
     public SinistroStatus status;
+
 
     @PrePersist
     public void prePersist() {

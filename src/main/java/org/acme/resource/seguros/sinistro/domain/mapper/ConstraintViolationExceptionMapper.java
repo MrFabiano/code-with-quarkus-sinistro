@@ -1,4 +1,4 @@
-package org.acme.resource.seguros.sinistro.infrastructure.config;
+package org.acme.resource.seguros.sinistro.domain.mapper;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;

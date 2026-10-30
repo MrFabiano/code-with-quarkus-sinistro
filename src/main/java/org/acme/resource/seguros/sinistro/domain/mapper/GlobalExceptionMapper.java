@@ -1,4 +1,4 @@
-package org.acme.resource.seguros.sinistro.infrastructure.config;
+package org.acme.resource.seguros.sinistro.domain.mapper;
 
 import jakarta.annotation.Priority;
 import jakarta.ws.rs.Priorities;
@@ -9,12 +9,8 @@ import jakarta.ws.rs.ext.Provider;
 import org.acme.resource.seguros.sinistro.domain.port.output.FriendlyResponse;
 import org.jboss.logging.Logger;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
 
 @Provider
 @Priority(Priorities.USER)

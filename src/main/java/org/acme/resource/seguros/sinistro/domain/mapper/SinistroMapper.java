@@ -1,4 +1,4 @@
-package org.acme.resource.seguros.sinistro.infrastructure.config;
+package org.acme.resource.seguros.sinistro.domain.mapper;
 
 import org.acme.resource.seguros.sinistro.adapter.in.rest.dto.SinistroPayload;
 import org.acme.resource.seguros.sinistro.adapter.out.persistence.Sinistro;

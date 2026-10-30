@@ -5,25 +5,34 @@ import jakarta.transaction.Transactional;
 import org.acme.resource.seguros.sinistro.adapter.out.persistence.EventoPendente;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.function.Consumer;
 
 @ApplicationScoped
 public class EventoPendenteService {
 
-    @Transactional(Transactional.TxType.REQUIRES_NEW)
-    public void remover(Long id) {
-        EventoPendente.deleteById(id);
+    @Transactional
+    public List<Long> idsPendentes(int limite) {
+        return EventoPendente.<EventoPendente>find("status = ?1 order by id", "PENDENTE")
+                .page(0, limite).list()
+                .stream().map(e -> e.id).toList();
     }
 
-    @Transactional(Transactional.TxType.REQUIRES_NEW)
-    public void marcarComoRejeitado(Long id, String motivo) {
-        EventoPendente e = EventoPendente.findById(id);
-        if (e == null) return;
+    /** Trava a linha (pulando as travadas por outras réplicas) e executa a ação na mesma transação. */
+    @Transactional
+    public void comLock(Long id, Consumer<EventoPendente> acao) {
+        EventoPendente evento = (EventoPendente) EventoPendente.getEntityManager()
+                .createNativeQuery("""
+                        select * from eventopendente
+                        where id = :id and status = 'PENDENTE'
+                        for update skip locked
+                        """, EventoPendente.class)
+                .setParameter("id", id)
+                .getResultStream().findFirst().orElse(null);
 
-        e.status = "REJEITADO";
-        // preserva a causa original, registra a rejeição à parte
-        e.motivoFalha = e.motivoFalha + " | REJEITADO: " + motivo;
-        e.dataRejeicao = LocalDateTime.now();
-        e.persist();
+        if (evento == null) {
+            return;   // outra réplica pegou ou já foi processado
+        }
+        acao.accept(evento);
     }
 }
-

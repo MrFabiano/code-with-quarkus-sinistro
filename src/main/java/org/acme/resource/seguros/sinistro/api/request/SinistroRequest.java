@@ -6,25 +6,28 @@ import jakarta.validation.constraints.*;
 import org.acme.resource.seguros.sinistro.domain.SinistroStatus;
 import org.acme.resource.seguros.sinistro.infrastructure.config.MoedaBigDecimalDeserializer;
 import org.acme.resource.seguros.sinistro.infrastructure.config.SinistroStatusDeserializer;
+import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import java.math.BigDecimal;
 
-@JsonIgnoreProperties(ignoreUnknown = false)
+@Schema(name = "SinistroRequest", description = "Dados para abertura de um sinistro")
 public record SinistroRequest(
-        @NotBlank @Size(min = 4, message = "O ID da apólice deve ter no mínimo 4 caracteres")
-        String apoliceId,
 
-        @NotBlank @Size(min = 6)
-        @Pattern(regexp = ".*[a-zA-Zà-úÀ-Ú].*", message = "A descrição deve conter pelo menos uma letra")
-        String descricao,
+        @Schema(description = "Identificador da apólice (mínimo 4 caracteres)", example = "AP-24248", required = true)
+        @NotBlank @Size(min = 4) String apoliceId,
 
-        @NotNull @DecimalMin("0.01")
+        @Schema(description = "Descrição do ocorrido (mínimo 6 caracteres, com ao menos uma letra)",
+                example = "Colisão na Av. 23 de Maio, km 06", required = true)
+        @NotBlank @Size(min = 6) String descricao,
+
+        @Schema(description = "Valor estimado. Aceita número (1500.09) ou texto brasileiro (\"1.500,09\", \"R$ 1.500,09\")",
+                type = SchemaType.STRING, example = "1.500,09", required = true)
         @JsonDeserialize(using = MoedaBigDecimalDeserializer.class)
-        BigDecimal valorEstimado,
+        @NotNull @DecimalMin("0.01") BigDecimal valorEstimado,
 
-        @NotNull(message = "O status é obrigatório")
+        @Schema(description = "Obrigatório e validado, mas o servidor sempre grava o sinistro como ABERTO",
+                example = "ABERTO", required = true)
         @JsonDeserialize(using = SinistroStatusDeserializer.class)
-        SinistroStatus status
-
-
+        @NotNull(message = "O status é obrigatório") SinistroStatus status
 ) {}

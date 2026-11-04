@@ -1,8 +1,7 @@
 package org.acme.resource.seguros.sinistro;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
@@ -218,6 +217,13 @@ class SinistroContingenciaTest {
     private long contarPendentes() {
         return QuarkusTransaction.requiringNew()
                 .call(() -> EventoPendente.count("status = ?1", "PENDENTE"));
+    }
+
+    @Test
+    void openapiDisponivel() {
+        given().when().get("/q/openapi")
+                .then().statusCode(200)
+                .body(containsString("/api/v1/sinistros"));
     }
 }
 

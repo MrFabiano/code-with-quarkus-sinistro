@@ -16,6 +16,7 @@ import jakarta.persistence.PrePersist;
 import org.acme.resource.seguros.sinistro.domain.SinistroStatus;
 import org.acme.resource.seguros.sinistro.infrastructure.config.MoedaBigDecimalDeserializer;
 import org.acme.resource.seguros.sinistro.infrastructure.config.SinistroStatusDeserializer;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.util.UUID;
 
@@ -53,6 +54,10 @@ public class Sinistro extends PanacheEntity {
     @Column(name = "status", nullable = false, length = 20)
     @JsonDeserialize(using = SinistroStatusDeserializer.class)
     public SinistroStatus status;
+
+    @CreationTimestamp
+    @Column(name = "datacriacao", updatable = false)
+    public LocalDateTime dataCriacao;
 
 
     @PrePersist

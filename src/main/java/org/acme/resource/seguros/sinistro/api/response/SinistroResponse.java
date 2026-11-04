@@ -1,5 +1,6 @@
 package org.acme.resource.seguros.sinistro.api.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.acme.resource.seguros.sinistro.adapter.out.persistence.Sinistro;
 import org.acme.resource.seguros.sinistro.domain.SinistroStatus;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
@@ -14,5 +15,8 @@ public record SinistroResponse(
         @Schema(example = "AP-24248") String apoliceId,
         @Schema(example = "Colisão na Av. 23 de Maio, km 06") String descricao,
         @Schema(type = SchemaType.NUMBER, example = "1500.09") BigDecimal valorEstimado,
-        SinistroStatus status
+        SinistroStatus status,
+        @Schema(example = "04/11/2026 15:17:17", readOnly = true)
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy HH:mm:ss")
+        LocalDateTime dataCriacao
 ) {}

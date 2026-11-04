@@ -4,6 +4,7 @@ import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import io.quarkus.scheduler.Scheduled;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -16,6 +17,8 @@ public class EventoPendente extends PanacheEntity {
     @Column(columnDefinition = "text")          // payload pode ser grande
     public String payloadJson;
 
+    @CreationTimestamp
+    @Column(name = "datacriacao", updatable = false)
     public LocalDateTime dataCriacao;
 
     @Column(length = 255)
@@ -27,6 +30,7 @@ public class EventoPendente extends PanacheEntity {
     @Column(length = 50)
     public String status = "PENDENTE";          // PENDENTE | REJEITADO
 
-    public LocalDateTime dataRejeicao;
 
+    @Column(name = "datarejeicao")
+    public LocalDateTime dataRejeicao;
 }

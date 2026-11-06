@@ -15,13 +15,16 @@ import org.acme.resource.seguros.sinistro.exception.ContingenciaIndisponivelExce
 import org.acme.resource.seguros.sinistro.exception.SinistroJaFechadoException;
 import org.acme.resource.seguros.sinistro.exception.SinistroNaoEncontradoException;
 import org.acme.resource.seguros.sinistro.domain.mapper.SinistroMapper;
+import org.acme.resource.seguros.sinistro.exception.TransicaoInvalidaException;
 import org.acme.resource.seguros.sinistro.producer.SinistroProducer;
+import org.acme.resource.seguros.sinistro.repository.SinistroPersistencePort;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static io.smallrye.jwt.config.ConfigLogging.log;
@@ -32,10 +35,10 @@ public class SinistroService {
     private static final Logger LOG = LoggerFactory.getLogger(SinistroService.class);
 
     @Inject SinistroMapper mapper;
-    @Inject SinistroPersistence persistence;
     @Inject SinistroProducer producer;
     @Inject ContingenciaLocalService contingenciaLocalService;
     @Inject MeterRegistry meterRegistry;
+    @Inject SinistroPersistencePort persistencePort;
 
     @Inject
     @RestClient
@@ -53,28 +56,12 @@ public class SinistroService {
     // ---------------------------------------------------------------
     // CRIAÇÃO
     // ---------------------------------------------------------------
-//    public ResultadoCriacao criar(SinistroRequest request) {
-//        log.infof("|| SERVICE RECEBEU || apoliceId=%s", request.apoliceId());
-//
-//        // 1. Persiste localmente antes do Kafka (REQUIRES_NEW, já com uuid e status ABERTO)
-//        Sinistro sinistro = mapper.toEntity(request);
-//        persistence.salvar(sinistro);
-//
-//        // 2. Publica no Kafka (o @Retry está no producer)
-//        try {
-//            producer.publicar(mapper.toEvent(sinistro));
-//            counterSucesso.increment();
-//            return new ResultadoCriacao.Criado(mapper.toResponse(sinistro));
-//        } catch (Exception e) {
-//            return tratarContingencia(sinistro, e);
-//        }
-//    }
     public ResultadoCriacao criar(SinistroRequest request) {
         log.infof("|| SERVICE RECEBEU || apoliceId=%s", request.apoliceId());
 
         Sinistro sinistro = mapper.toEntity(request);
         try {
-            persistence.salvar(sinistro);
+            persistencePort.salvar(sinistro);
         } catch (Exception e) {
             LOG.error("Falha ao persistir sinistro", e);
             throw new ContingenciaIndisponivelException(
@@ -140,13 +127,43 @@ public class SinistroService {
     @Transactional
     public SinistroResponse atualizar(String uuid, SinistroUpdateRequest request) {
         Sinistro sinistro = buscarEntidade(uuid);
-
-        if (request.status() == SinistroStatus.FECHADO
-                && sinistro.status == SinistroStatus.FECHADO) {
+        if (sinistro.status.isFinal()) {
             throw new SinistroJaFechadoException();
         }
+        aplicarTransicao(sinistro, request.status());
+        mapper.updateEntity(request, sinistro);
+        return mapper.toResponse(sinistro);
+    }
 
-        mapper.updateEntity(request, sinistro);   // entidade gerenciada: o flush acontece no commit
+    private void aplicarTransicao(Sinistro sinistro, SinistroStatus novo) {
+        if (novo == null || novo == sinistro.status) {
+            return;
+        }
+        if (!sinistro.status.podeIrPara(novo)) {
+            throw new TransicaoInvalidaException(sinistro.status, novo);
+        }
+        sinistro.status = novo;
+        if (novo == SinistroStatus.FECHADO) {
+            sinistro.dataConclusao = LocalDateTime.now();
+        }
+    }
+
+    @Transactional
+    public SinistroResponse alterarStatus(String uuid, SinistroStatus novo) {
+        Sinistro sinistro = buscarEntidade(uuid);
+
+        if (sinistro.status.isFinal()) {
+            throw new SinistroJaFechadoException();
+        }
+        if (novo != sinistro.status) {
+            if (!sinistro.status.podeIrPara(novo)) {
+                throw new TransicaoInvalidaException(sinistro.status, novo);
+            }
+            sinistro.status = novo;
+            if (novo == SinistroStatus.FECHADO) {
+                sinistro.dataConclusao = LocalDateTime.now();
+            }
+        }
         return mapper.toResponse(sinistro);
     }
 

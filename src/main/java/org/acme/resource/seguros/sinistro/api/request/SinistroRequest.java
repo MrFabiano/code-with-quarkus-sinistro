@@ -24,10 +24,7 @@ public record SinistroRequest(
         @Schema(description = "Valor estimado. Aceita número (1500.09) ou texto brasileiro (\"1.500,09\", \"R$ 1.500,09\")",
                 type = SchemaType.STRING, example = "1.500,09", required = true)
         @JsonDeserialize(using = MoedaBigDecimalDeserializer.class)
-        @NotNull @DecimalMin("0.01") BigDecimal valorEstimado,
+        @NotNull @DecimalMin("0.01") BigDecimal valorEstimado
 
-        @Schema(description = "Obrigatório e validado, mas o servidor sempre grava o sinistro como ABERTO",
-                example = "ABERTO", required = true)
-        @JsonDeserialize(using = SinistroStatusDeserializer.class)
-        @NotNull(message = "O status é obrigatório") SinistroStatus status
+
 ) {}

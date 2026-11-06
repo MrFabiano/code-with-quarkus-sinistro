@@ -59,6 +59,10 @@ public class Sinistro extends PanacheEntity {
     @Column(name = "datacriacao", updatable = false)
     public LocalDateTime dataCriacao;
 
+    public LocalDateTime dataConclusao;
+
+    @Version
+    public Long versao;
 
     @PrePersist
     public void prePersist() {

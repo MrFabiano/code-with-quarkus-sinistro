@@ -8,6 +8,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.acme.resource.seguros.sinistro.adapter.in.rest.dto.MensagemResponse;
+import org.acme.resource.seguros.sinistro.api.request.AlterarStatusRequest;
 import org.acme.resource.seguros.sinistro.api.request.SinistroRequest;
 import org.acme.resource.seguros.sinistro.api.request.SinistroUpdateRequest;
 import org.acme.resource.seguros.sinistro.api.response.*;
@@ -110,6 +111,17 @@ public class SinistroResource {
     })
     public SinistroResponse atualizar(@PathParam("uuid") String uuid, @Valid SinistroUpdateRequest request) {
         return service.atualizar(uuid, request);
+    }
+
+    @PATCH
+    @Path("/{uuid}/status")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @RunOnVirtualThread
+    @Operation(summary = "Altera o status do sinistro")
+    public SinistroResponse alterarStatus(@PathParam("uuid") String uuid,
+                                          @Valid AlterarStatusRequest request) {
+        return service.alterarStatus(uuid, request.status());
     }
 
     @DELETE

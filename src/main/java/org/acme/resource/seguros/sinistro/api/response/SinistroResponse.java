@@ -1,6 +1,7 @@
 package org.acme.resource.seguros.sinistro.api.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.acme.resource.seguros.sinistro.adapter.out.persistence.Sinistro;
 import org.acme.resource.seguros.sinistro.domain.SinistroStatus;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
@@ -8,7 +9,6 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-
 @Schema(name = "SinistroResponse", description = "Sinistro registrado")
 public record SinistroResponse(
         @Schema(example = "5d3abf04-ab4b-4592-a9e2-7e5e3f82347e") String uuid,
@@ -18,5 +18,9 @@ public record SinistroResponse(
         SinistroStatus status,
         @Schema(example = "04/11/2026 15:17:17", readOnly = true)
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy HH:mm:ss")
-        LocalDateTime dataCriacao
+        LocalDateTime dataCriacao,
+        @Schema(example = "05/11/2026 17:30:00", readOnly = true)
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy HH:mm:ss")
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        LocalDateTime dataConclusao
 ) {}

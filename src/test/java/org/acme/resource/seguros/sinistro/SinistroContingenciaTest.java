@@ -26,6 +26,8 @@ import org.acme.resource.seguros.sinistro.adapter.out.persistence.Sinistro;
 import org.acme.resource.seguros.sinistro.domain.service.ContingenciaLocalService;
 import org.acme.resource.seguros.sinistro.domain.service.SinistroScheduler;
 import org.acme.resource.seguros.sinistro.producer.SinistroProducer;
+import org.acme.resource.seguros.sinistro.repository.SinistroPersistence;
+import org.acme.resource.seguros.sinistro.repository.SinistroPersistencePort;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -66,6 +68,9 @@ class SinistroContingenciaTest {
 
     @Inject
     SinistroScheduler scheduler;
+
+    @InjectSpy
+    SinistroPersistence persistence;
 
     @AfterEach
     void resetarSpy() {

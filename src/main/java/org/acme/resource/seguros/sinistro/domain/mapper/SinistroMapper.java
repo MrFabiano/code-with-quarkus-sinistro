@@ -17,9 +17,13 @@ import java.util.List;
 @Mapper(componentModel = MappingConstants.ComponentModel.JAKARTA_CDI)
 public interface SinistroMapper {
 
+
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "uuid", ignore = true)    // gerado no @PrePersist
-    @Mapping(target = "status", ignore = true) // service define ABERTO
+    @Mapping(target = "status", constant = "ABERTO") // service define ABERTO
+    @Mapping(target = "dataCriacao", ignore = true)
+    @Mapping(target = "dataConclusao", ignore = true)
+    @Mapping(target = "versao", ignore = true)
     Sinistro toEntity(SinistroRequest request);
 
     SinistroResponse toResponse(Sinistro entity);
@@ -27,8 +31,12 @@ public interface SinistroMapper {
     List<SinistroResponse> toResponseList(List<Sinistro> entities);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "status", ignore = true)
     @Mapping(target = "uuid", ignore = true)
-    void updateEntity(SinistroUpdateRequest request, @MappingTarget Sinistro entity);
+    @Mapping(target = "dataCriacao", ignore = true)
+    @Mapping(target = "dataConclusao", ignore = true)
+    @Mapping(target = "versao", ignore = true)
+    void updateEntity(SinistroUpdateRequest request, @MappingTarget Sinistro sinistro);
 
     // Eventos e payload do Camel também ficam aqui
     @Mapping(target = "tipoEvento", constant = "SINISTRO_CRIADO")
@@ -36,6 +44,4 @@ public interface SinistroMapper {
     SinistroEvent toEvent(Sinistro sinistro);
 
     SinistroPayload toPayload(Sinistro sinistro);
-
-
 }

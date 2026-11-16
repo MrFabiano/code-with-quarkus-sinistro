@@ -3,8 +3,8 @@ services:
     image: postgres:16
     container_name: seguros-db
     environment:
-      POSTGRES_USER: quarkus
-      POSTGRES_PASSWORD: quarkus
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: seguros_db
     ports:
       - "5432:5432"
@@ -17,8 +17,8 @@ services:
     depends_on:
       - postgres
     environment:
-      PGADMIN_DEFAULT_EMAIL: fabiannosanttos@gmail.com
-      PGADMIN_DEFAULT_PASSWORD: postgres
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
     ports:
       - "5051:80"
     volumes:
@@ -44,6 +44,9 @@ services:
       CAMEL_ROUTER_URL: http://seguros-camel-router:8081
       QUARKUS_OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4317
       QUARKUS_OTEL_TRACES_SAMPLER: always_on
+      QUARKUS_LOG_CATEGORY__IO_QUARKUS_OIDC_CLIENT__LEVEL: DEBUG
+      QUARKUS_REST_CLIENT_LOGGING_SCOPE: request-response
+      QUARKUS_LOG_CATEGORY__ORG_JBOSS_RESTEASY_REACTIVE_CLIENT_LOGGING__LEVEL: DEBUG
    ports:
     - "8080:8080"
    depends_on:
@@ -121,7 +124,7 @@ services:
       - "3000:3000"
     environment:
       GF_SECURITY_ADMIN_USER: admin
-      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD}
     volumes:
       - grafana-data:/var/lib/grafana
     depends_on:
@@ -134,9 +137,10 @@ services:
     container_name: seguros-auth
     command: start-dev --http-relative-path /auth
     environment:
-      KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: admin
-      KC_HOSTNAME_STRICT: "false"
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KC_HOSTNAME_URL: http://localhost:8180/auth
+      KC_HOSTNAME_STRICT_BACKCHANNEL: "false"
       KC_HTTP_ENABLED: "true"
     ports:
       - "8180:8080"

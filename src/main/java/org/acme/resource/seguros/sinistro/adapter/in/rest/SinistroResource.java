@@ -1,5 +1,6 @@
 package org.acme.resource.seguros.sinistro.adapter.in.rest;
 
+import io.quarkus.security.identity.SecurityIdentity;
 import io.smallrye.common.annotation.RunOnVirtualThread;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -8,6 +9,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.acme.resource.seguros.sinistro.adapter.in.rest.dto.MensagemResponse;
+import org.acme.resource.seguros.sinistro.adapter.out.persistence.ResultadoIdempotente;
 import org.acme.resource.seguros.sinistro.api.request.AlterarStatusRequest;
 import org.acme.resource.seguros.sinistro.api.request.SinistroRequest;
 import org.acme.resource.seguros.sinistro.api.request.SinistroUpdateRequest;
@@ -18,6 +20,7 @@ import jakarta.ws.rs.*;
 
 import java.util.List;
 
+import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
@@ -42,16 +45,16 @@ public class SinistroResource {
     @RunOnVirtualThread
     @Operation(summary = "Abre um sinistro",
             description = "Valida, persiste como ABERTO e publica o evento no Kafka. Se o Kafka falhar, tenta o Camel Router e, "
-                    + "em último caso, grava o evento em fila de pendências (reprocessado automaticamente).")
+                    + "em último caso, grava o evento em fila de pendências (reprocessado automaticamente). "
+                    + "Com o cabeçalho Idempotency-Key, repetir a chamada devolve a resposta original sem criar outro sinistro.")
     @RequestBody(required = true, content = @Content(
             schema = @Schema(implementation = SinistroRequest.class),
             examples = @ExampleObject(name = "Exemplo", value = """
-                    {
-                      "apoliceId": "AP-24248",
-                      "descricao": "Colisão na Av. 23 de Maio, km 06",
-                      "valorEstimado": "1.500,09",
-                      "status": "ABERTO"
-                    }""")))
+                {
+                  "apoliceId": "AP-24248",
+                  "descricao": "Colisão na Av. 23 de Maio, km 06",
+                  "valorEstimado": "1.500,09"
+                }""")))
     @APIResponses({
             @APIResponse(responseCode = "201", description = "Sinistro criado e evento publicado",
                     content = @Content(schema = @Schema(implementation = SinistroResponse.class))),
@@ -59,16 +62,30 @@ public class SinistroResource {
                     content = @Content(schema = @Schema(implementation = MensagemResponse.class))),
             @APIResponse(responseCode = "400", description = "Falha de validação",
                     content = @Content(schema = @Schema(implementation = MensagemResponse.class))),
+            @APIResponse(responseCode = "409", description = "Requisição com a mesma chave ainda em processamento",
+                    content = @Content(schema = @Schema(implementation = MensagemResponse.class))),
+            @APIResponse(responseCode = "422", description = "Chave de idempotência reutilizada com outro conteúdo",
+                    content = @Content(schema = @Schema(implementation = MensagemResponse.class))),
             @APIResponse(responseCode = "503", description = "Nem a contingência conseguiu registrar o evento",
                     content = @Content(schema = @Schema(implementation = MensagemResponse.class)))
     })
-    public RestResponse<Object> criar(@Valid SinistroRequest request) {
-        return switch (service.criar(request)) {
+    public RestResponse<Object> criar(
+            @Parameter(description = "Chave única por operação (UUID). Repetir a chamada com a mesma chave não cria outro sinistro.",
+                    example = "7c9e6679-7425-40de-944b-e07fc1f90ae7")
+            @HeaderParam("Idempotency-Key") String chave,
+            @Valid SinistroRequest request) {
+        //ResultadoIdempotente r = service.criarIdempotente(request, chave, solicitante());
+        ResultadoIdempotente r = service.criarIdempotente(request, chave);//ResultadoIdempotente r = service.criarIdempotente(request, chave, solicitante);
+        RestResponse.ResponseBuilder<Object> resposta = switch (r.resultado()) {
             case ResultadoCriacao.Criado c ->
-                    RestResponse.status(Response.Status.CREATED, c.sinistro());
+                    RestResponse.ResponseBuilder.create(Response.Status.CREATED, (Object) c.sinistro());
             case ResultadoCriacao.EmContingencia c ->
-                    RestResponse.status(Response.Status.ACCEPTED, new MensagemResponse(c.mensagem()));
+                    RestResponse.ResponseBuilder.create(Response.Status.ACCEPTED, (Object) new MensagemResponse(c.mensagem()));
         };
+        if (r.repetido()) {
+            resposta.header("Idempotent-Replayed", "true");
+        }
+        return resposta.build();
     }
 
     @GET

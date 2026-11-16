@@ -1,28 +1,22 @@
-2026-11-05 17:34:08.340 INFO  [,] [ForkJoinPool.commonPool-worker-3hread] io.qu.de.ke.KeycloakDevServicesProcessor - Using Quarkus powered Keycloak distribution
-2026-11-05 17:34:08.526 INFO  [,] [ForkJoinPool.commonPool-worker-3hread] tc.qu.io.5.7 - Creating container for image: quay.io/keycloak/keycloak:26.5.7
-2026-11-05 17:34:08.628 INFO  [,] [ForkJoinPool.commonPool-worker-2hread] tc.do.io.2.0 - Creating container for image: docker.io/apache/kafka-native:4.2.0
-2026-11-05 17:34:08.628 INFO  [,] [ForkJoinPool.commonPool-worker-1hread] tc.do.io/library/postgres:18 - Creating container for image: docker.io/library/postgres:18
-2026-11-05 17:34:08.811 INFO  [,] [ForkJoinPool.commonPool-worker-3hread] or.te.ut.RegistryAuthLocator - Credential helper/store (docker-credential-desktop) does not have credentials for quay.io
-2026-11-05 17:34:08.830 INFO  [,] [ForkJoinPool.commonPool-worker-3hread] tc.te.14.0 - Creating container for image: testcontainers/ryuk:0.14.0
-2026-11-05 17:34:08.869 INFO  [,] [ForkJoinPool.commonPool-worker-2hread] or.te.ut.RegistryAuthLocator - Credential helper/store (docker-credential-desktop) does not have credentials for docker.io
-2026-11-05 17:34:08.870 WARN  [,] [ForkJoinPool.commonPool-worker-1hread] tc.do.io/library/postgres:18 - Reuse was requested but the environment does not support the reuse of containers
+2026-11-16 10:09:11.816 INFO  [,] [ForkJoinPool.commonPool-worker-2hread] tc.do.io.2.0 - Creating container for image: docker.io/apache/kafka-native:4.2.0
+2026-11-16 10:09:11.816 INFO  [,] [ForkJoinPool.commonPool-worker-1hread] tc.do.io/library/postgres:18 - Creating container for image: docker.io/library/postgres:18
+2026-11-16 10:09:12.158 INFO  [,] [ForkJoinPool.commonPool-worker-2hread] or.te.ut.RegistryAuthLocator - Credential helper/store (docker-credential-desktop) does not have credentials for docker.io
+2026-11-16 10:09:12.178 WARN  [,] [ForkJoinPool.commonPool-worker-1hread] tc.do.io/library/postgres:18 - Reuse was requested but the environment does not support the reuse of containers
 To enable reuse of containers, you must set 'testcontainers.reuse.enable=true' in a file located at C:\Users\fabia\.testcontainers.properties
-2026-11-05 17:34:09.025 INFO  [,] [ForkJoinPool.commonPool-worker-3hread] or.te.ut.RegistryAuthLocator - Credential helper/store (docker-credential-desktop) does not have credentials for https://index.docker.io/v1/
-2026-11-05 17:34:09.417 INFO  [,] [ForkJoinPool.commonPool-worker-3hread] tc.te.14.0 - Container testcontainers/ryuk:0.14.0 is starting: 328eb2657a66bd9670977e6a2f1e35e8ba4604b36e8f44dcb008d09d19a373c9
-2026-11-05 17:34:10.840 INFO  [,] [ForkJoinPool.commonPool-worker-3hread] tc.te.14.0 - Container testcontainers/ryuk:0.14.0 started in PT2.0079234S
-2026-11-05 17:34:11.204 INFO  [,] [ForkJoinPool.commonPool-worker-2hread] tc.do.io.2.0 - Container docker.io/apache/kafka-native:4.2.0 is starting: c5196d09388df08ebbcd1b5807aeff0ca8cead55694b1dafae2a337842b1952a
-2026-11-05 17:34:11.206 INFO  [,] [ForkJoinPool.commonPool-worker-1hread] tc.do.io/library/postgres:18 - Container docker.io/library/postgres:18 is starting: 22074454cd3deccb250ab0c1bf5e3a9322eae8fd33e6287fc8857b3065ffa648
-2026-11-05 17:34:11.320 INFO  [,] [ForkJoinPool.commonPool-worker-3hread] tc.qu.io.5.7 - Container quay.io/keycloak/keycloak:26.5.7 is starting: 10acad4d088cd069dca07b2a109f7d12ef45712d2e5945ad5a07269b7b050869
-2026-11-05 17:34:12.589 INFO  [,] [ForkJoinPool.commonPool-worker-2hread] tc.do.io.2.0 - Container docker.io/apache/kafka-native:4.2.0 started in PT3.9611972S
-2026-11-05 17:34:12.599 INFO  [,] [ForkJoinPool.commonPool-worker-2hread] io.qu.ka.cl.de.DevServicesKafkaProcessor - Dev Services for Kafka started. Other Quarkus applications in dev mode will find the broker automatically. For Quarkus applications in production mode, you can connect to this by starting your application with -Dkafka.bootstrap.servers=localhost:63197
-2026-11-05 17:34:14.646 INFO  [,] [ForkJoinPool.commonPool-worker-1hread] tc.do.io/library/postgres:18 - Container docker.io/library/postgres:18 started in PT6.0176045S
-2026-11-05 17:34:14.647 INFO  [,] [ForkJoinPool.commonPool-worker-1hread] tc.do.io/library/postgres:18 - Container is started (JDBC URL: jdbc:postgresql://localhost:63198/quarkus?loggerLevel=OFF)
-2026-11-05 17:34:14.649 INFO  [,] [ForkJoinPool.commonPool-worker-1hread] io.qu.da.de.de.DevServicesDatasourceProcessor - Dev Services for default datasource (postgresql) started - container ID is 22074454cd3d
-2026-11-05 17:35:01.677 INFO  [,] [ForkJoinPool.commonPool-worker-3hread] tc.qu.io.5.7 - Container quay.io/keycloak/keycloak:26.5.7 started in PT53.1506824S
-2026-11-05 17:35:05.613 INFO  [,] [ForkJoinPool.commonPool-worker-3hread] io.qu.de.ke.KeycloakDevServicesProcessor - Dev Services for Keycloak started.
-2026-11-05 17:35:07.078 INFO  [,] [mainhread] or.hi.or.jpa - HHH008540: Processing PersistenceUnitInfo [name: <default>]
-2026-11-05 17:35:07.476 INFO  [,] [mainhread] or.hi.or.core - HHH000001: Hibernate ORM core version 7.3.2.Final
-2026-11-05 17:35:08.161 INFO  [,] [mainhread] or.hi.or.co.pooling - HHH10001005: Database info:
+2026-11-16 10:09:12.178 INFO  [,] [ForkJoinPool.commonPool-worker-2hread] tc.te.14.0 - Creating container for image: testcontainers/ryuk:0.14.0
+2026-11-16 10:09:13.001 INFO  [,] [ForkJoinPool.commonPool-worker-2hread] or.te.ut.RegistryAuthLocator - Credential helper/store (docker-credential-desktop) does not have credentials for https://index.docker.io/v1/
+2026-11-16 10:09:13.388 INFO  [,] [ForkJoinPool.commonPool-worker-2hread] tc.te.14.0 - Container testcontainers/ryuk:0.14.0 is starting: 8e62b8085eff8681598c3d9f46f9e4234f807ed8c96155ad197c2bb07327ca04
+2026-11-16 10:09:14.439 INFO  [,] [ForkJoinPool.commonPool-worker-2hread] tc.te.14.0 - Container testcontainers/ryuk:0.14.0 started in PT2.2601064S
+2026-11-16 10:09:14.708 INFO  [,] [ForkJoinPool.commonPool-worker-2hread] tc.do.io.2.0 - Container docker.io/apache/kafka-native:4.2.0 is starting: d8421af2aa9875cb3807236e5a68051157c23e66c5654bb25e1525bc8eac57a2
+2026-11-16 10:09:14.761 INFO  [,] [ForkJoinPool.commonPool-worker-1hread] tc.do.io/library/postgres:18 - Container docker.io/library/postgres:18 is starting: 2362a5fb78d2d3ed0757d226676fff6d38eb32548a2b80da4e0064deeb97779a
+2026-11-16 10:09:16.799 INFO  [,] [ForkJoinPool.commonPool-worker-2hread] tc.do.io.2.0 - Container docker.io/apache/kafka-native:4.2.0 started in PT4.9824257S
+2026-11-16 10:09:16.804 INFO  [,] [ForkJoinPool.commonPool-worker-2hread] io.qu.ka.cl.de.DevServicesKafkaProcessor - Dev Services for Kafka started. Other Quarkus applications in dev mode will find the broker automatically. For Quarkus applications in production mode, you can connect to this by starting your application with -Dkafka.bootstrap.servers=localhost:58753
+2026-11-16 10:09:18.067 INFO  [,] [ForkJoinPool.commonPool-worker-1hread] tc.do.io/library/postgres:18 - Container docker.io/library/postgres:18 started in PT6.2511495S
+2026-11-16 10:09:18.068 INFO  [,] [ForkJoinPool.commonPool-worker-1hread] tc.do.io/library/postgres:18 - Container is started (JDBC URL: jdbc:postgresql://localhost:58754/quarkus?loggerLevel=OFF)
+2026-11-16 10:09:18.068 INFO  [,] [ForkJoinPool.commonPool-worker-1hread] io.qu.da.de.de.DevServicesDatasourceProcessor - Dev Services for default datasource (postgresql) started - container ID is 2362a5fb78d2
+2026-11-16 10:09:18.640 INFO  [,] [mainhread] or.hi.or.jpa - HHH008540: Processing PersistenceUnitInfo [name: <default>]
+2026-11-16 10:09:18.826 INFO  [,] [mainhread] or.hi.or.core - HHH000001: Hibernate ORM core version 7.3.2.Final
+2026-11-16 10:09:19.220 INFO  [,] [mainhread] or.hi.or.co.pooling - HHH10001005: Database info:
 	Database JDBC URL [undefined/unknown]
 	Database driver: undefined/unknown
 	Database dialect: PostgreSQLDialect
@@ -34,54 +28,55 @@ To enable reuse of containers, you must set 'testcontainers.reuse.enable=true' i
 	Pool: undefined/unknown
 	Minimum pool size: undefined/unknown
 	Maximum pool size: undefined/unknown
-2026-11-05 17:35:08.565 INFO  [,] [mainhread] or.hi.va.in.ut.Version - HV000001: Hibernate Validator 9.1.0.Final
-2026-11-05 17:35:09.520 WARN  [,] [mainhread] io.qu.config - Unrecognized configuration key "quarkus.smallrye-messaging.tracing.enabled" was provided; it will be ignored; verify that the dependency extension for this configuration is set or that you did not make a typo
-2026-11-05 17:35:09.521 WARN  [,] [mainhread] io.qu.config - Unrecognized configuration key "quarkus.hibernate-orm.health.enabled" was provided; it will be ignored; verify that the dependency extension for this configuration is set or that you did not make a typo
-2026-11-05 17:35:09.521 WARN  [,] [mainhread] io.qu.config - Unrecognized configuration key "quarkus.vertx.http.response-header-tracing.enabled" was provided; it will be ignored; verify that the dependency extension for this configuration is set or that you did not make a typo
-2026-11-05 17:35:09.522 WARN  [,] [mainhread] io.qu.config - Unrecognized configuration key "quarkus.smallrye-health.startup.path" was provided; it will be ignored; verify that the dependency extension for this configuration is set or that you did not make a typo
-2026-11-05 17:35:09.522 WARN  [,] [mainhread] io.qu.config - Unrecognized configuration key "quarkus.log.console.json" was provided; it will be ignored; verify that the dependency extension for this configuration is set or that you did not make a typo
-2026-11-05 17:35:09.523 WARN  [,] [mainhread] io.qu.config - Unrecognized configuration key "quarkus.otel.exporter.otlp.traces.enabled" was provided; it will be ignored; verify that the dependency extension for this configuration is set or that you did not make a typo
-2026-11-05 17:35:09.524 WARN  [,] [mainhread] io.qu.config - Unrecognized configuration key "quarkus.smallrye-health.show-details" was provided; it will be ignored; verify that the dependency extension for this configuration is set or that you did not make a typo
-2026-11-05 17:35:09.525 WARN  [,] [mainhread] io.qu.config - Unrecognized configuration key "quarkus.kafka.tracing.enabled" was provided; it will be ignored; verify that the dependency extension for this configuration is set or that you did not make a typo
-2026-11-05 17:35:09.526 WARN  [,] [mainhread] io.qu.config - Unrecognized configuration key "quarkus.smallrye-health.liveness.path" was provided; it will be ignored; verify that the dependency extension for this configuration is set or that you did not make a typo
-2026-11-05 17:35:09.526 WARN  [,] [mainhread] io.qu.config - Unrecognized configuration key "quarkus.opentelemetry.tracer.sampling-parent-probability" was provided; it will be ignored; verify that the dependency extension for this configuration is set or that you did not make a typo
-2026-11-05 17:35:09.526 WARN  [,] [mainhread] io.qu.config - Unrecognized configuration key "quarkus.opentelemetry.tracer.exporter.otlp.endpoint" was provided; it will be ignored; verify that the dependency extension for this configuration is set or that you did not make a typo
-2026-11-05 17:35:09.528 WARN  [,] [mainhread] io.qu.config - Unrecognized configuration key "quarkus.opentelemetry.tracer.sampling-rate" was provided; it will be ignored; verify that the dependency extension for this configuration is set or that you did not make a typo
-2026-11-05 17:35:09.528 WARN  [,] [mainhread] io.qu.config - Unrecognized configuration key "quarkus.smallrye-health.readiness.path" was provided; it will be ignored; verify that the dependency extension for this configuration is set or that you did not make a typo
-2026-11-05 17:35:09.529 WARN  [,] [mainhread] io.qu.config - Unrecognized configuration key "quarkus.resteasy.validation.throw-exception" was provided; it will be ignored; verify that the dependency extension for this configuration is set or that you did not make a typo
-2026-11-05 17:35:09.529 WARN  [,] [mainhread] io.qu.config - Unrecognized configuration key "quarkus.opentelemetry.tracer.resource-attributes.service.name" was provided; it will be ignored; verify that the dependency extension for this configuration is set or that you did not make a typo
-2026-11-05 17:35:09.935 WARN  [,] [mainhread] io.qu.config - The "quarkus.hibernate-orm.database.generation" config property is deprecated and should not be used anymore.
-2026-11-05 17:35:09.936 WARN  [,] [mainhread] io.qu.config - The "quarkus.log.file.enable" config property is deprecated and should not be used anymore.
-2026-11-05 17:35:12.095 WARN  [,] [JPA Startup Threadhread] or.hi.or.jd.warn - HHH000247: ErrorCode: 0, SQLState: 00000
-2026-11-05 17:35:12.096 WARN  [,] [JPA Startup Threadhread] or.hi.or.jd.warn - constraint "uk101n1je6y7908ymdrtyvucre1" of relation "eventopendente" does not exist, skipping
-2026-11-05 17:35:12.108 WARN  [,] [JPA Startup Threadhread] or.hi.or.jd.warn - HHH000247: ErrorCode: 0, SQLState: 00000
-2026-11-05 17:35:12.109 WARN  [,] [JPA Startup Threadhread] or.hi.or.jd.warn - constraint "uk9c0s0ia2q850sx5oyn96s0dxl" of relation "sinistro" does not exist, skipping
-2026-11-05 17:35:13.618 INFO  [,] [mainhread] io.sm.re.me.kafka - SRMSG18229: Configured topics for channel 'seguros-sinistros-in': [seguros.sinistros.events]
-2026-11-05 17:35:13.640 INFO  [,] [mainhread] io.sm.re.me.kafka - SRMSG18214: Key deserializer omitted, using String as default
-2026-11-05 17:35:14.345 INFO  [,] [smallrye-kafka-producer-thread-0hread] io.sm.re.me.kafka - SRMSG18258: Kafka producer kafka-dead-letter-topic-producer-kafka-consumer-seguros-sinistros-in, connected to Kafka brokers 'localhost:63197', is configured to write records to 'seguros-sinistros-dlq'
-2026-11-05 17:35:14.421 INFO  [,] [mainhread] io.sm.re.me.kafka - SRMSG18229: Configured topics for channel 'words-in': [words-in]
-2026-11-05 17:35:14.426 INFO  [,] [mainhread] io.sm.re.me.kafka - SRMSG18214: Key deserializer omitted, using String as default
-2026-11-05 17:35:14.491 INFO  [,] [smallrye-kafka-producer-thread-1hread] io.sm.re.me.kafka - SRMSG18258: Kafka producer kafka-producer-seguros-sinistros-dlq, connected to Kafka brokers 'localhost:63197', is configured to write records to 'seguros-sinistros-dlq'
-2026-11-05 17:35:14.536 INFO  [,] [smallrye-kafka-producer-thread-2hread] io.sm.re.me.kafka - SRMSG18258: Kafka producer kafka-producer-seguros-sinistros-out, connected to Kafka brokers 'localhost:63197', is configured to write records to 'seguros.sinistros.events'
-2026-11-05 17:35:14.566 INFO  [,] [smallrye-kafka-producer-thread-3hread] io.sm.re.me.kafka - SRMSG18258: Kafka producer kafka-producer-words-out, connected to Kafka brokers 'localhost:63197', is configured to write records to 'words-out'
-2026-11-05 17:35:14.676 INFO  [,] [smallrye-kafka-consumer-thread-0hread] io.sm.re.me.kafka - SRMSG18257: Kafka consumer kafka-consumer-seguros-sinistros-in, connected to Kafka brokers 'localhost:63197', belongs to the 'code-with-quarkus' consumer group and is configured to poll records from [seguros.sinistros.events]
-2026-11-05 17:35:14.681 INFO  [,] [smallrye-kafka-consumer-thread-1hread] io.sm.re.me.kafka - SRMSG18257: Kafka consumer kafka-consumer-words-in, connected to Kafka brokers 'localhost:63197', belongs to the 'code-with-quarkus' consumer group and is configured to poll records from [words-in]
-2026-11-05 17:35:14.851 INFO  [,] [mainhread] io.quarkus - code-with-quarkus 1.0.0-SNAPSHOT on JVM (powered by Quarkus 3.35.3) started in 89.797s. Listening on: http://localhost:8081
-2026-11-05 17:35:14.852 INFO  [,] [mainhread] io.quarkus - Profile test activated. 
-2026-11-05 17:35:14.852 INFO  [,] [mainhread] io.quarkus - Installed features: [agroal, cdi, compose, hibernate-orm, hibernate-orm-panache, hibernate-validator, jdbc-postgresql, kafka-client, kubernetes, langchain4j, langchain4j-oidc-model-auth-provider, messaging, messaging-kafka, micrometer, narayana-jta, oidc, opentelemetry, qute, rest, rest-client, rest-client-jackson, rest-jackson, scheduler, security, smallrye-context-propagation, smallrye-fault-tolerance, smallrye-health, smallrye-openapi, swagger-ui, vertx]
-2026-11-05 17:35:15.506 WARN  [,] [kafka-producer-network-thread | kafka-producer-words-outhread] or.ap.ka.cl.NetworkClient - [Producer clientId=kafka-producer-words-out] The metadata response from the cluster reported a recoverable issue with correlation id 1 : {words-out=UNKNOWN_TOPIC_OR_PARTITION}
-2026-11-05 17:35:15.506 WARN  [,] [smallrye-kafka-consumer-thread-0hread] or.ap.ka.cl.NetworkClient - [Consumer clientId=kafka-consumer-seguros-sinistros-in, groupId=code-with-quarkus] The metadata response from the cluster reported a recoverable issue with correlation id 2 : {seguros.sinistros.events=UNKNOWN_TOPIC_OR_PARTITION}
-2026-11-05 17:35:15.506 WARN  [,] [smallrye-kafka-consumer-thread-1hread] or.ap.ka.cl.NetworkClient - [Consumer clientId=kafka-consumer-words-in, groupId=code-with-quarkus] The metadata response from the cluster reported a recoverable issue with correlation id 2 : {words-in=UNKNOWN_TOPIC_OR_PARTITION}
-2026-11-05 17:35:21.003 INFO  [fea35044-3dc4-4b,] [quarkus-virtual-thread-0hread] io.sm.jw.config - || SERVICE RECEBEU || apoliceId=AP-24248
-2026-11-05 17:35:21.122 WARN  [fea35044-3dc4-4b,] [quarkus-virtual-thread-0hread] io.sm.jw.config - !!! FALLBACK ACIONADO !!! Motivo: kafka fora
-2026-11-05 17:35:21.125 ERROR [fea35044-3dc4-4b,] [quarkus-virtual-thread-0hread] or.ac.re.se.si.do.se.SinistroService - Camel Router indisponível. Gravando contingência localmente...: java.lang.RuntimeException: router fora
+2026-11-16 10:09:19.637 INFO  [,] [mainhread] or.hi.va.in.ut.Version - HV000001: Hibernate Validator 9.1.0.Final
+2026-11-16 10:09:20.393 WARN  [,] [mainhread] io.qu.config - Unrecognized configuration key "quarkus.smallrye-messaging.tracing.enabled" was provided; it will be ignored; verify that the dependency extension for this configuration is set or that you did not make a typo
+2026-11-16 10:09:20.394 WARN  [,] [mainhread] io.qu.config - Unrecognized configuration key "quarkus.hibernate-orm.health.enabled" was provided; it will be ignored; verify that the dependency extension for this configuration is set or that you did not make a typo
+2026-11-16 10:09:20.395 WARN  [,] [mainhread] io.qu.config - Unrecognized configuration key "quarkus.vertx.http.response-header-tracing.enabled" was provided; it will be ignored; verify that the dependency extension for this configuration is set or that you did not make a typo
+2026-11-16 10:09:20.395 WARN  [,] [mainhread] io.qu.config - Unrecognized configuration key "quarkus.smallrye-health.startup.path" was provided; it will be ignored; verify that the dependency extension for this configuration is set or that you did not make a typo
+2026-11-16 10:09:20.396 WARN  [,] [mainhread] io.qu.config - Unrecognized configuration key "quarkus.log.console.json" was provided; it will be ignored; verify that the dependency extension for this configuration is set or that you did not make a typo
+2026-11-16 10:09:20.396 WARN  [,] [mainhread] io.qu.config - Unrecognized configuration key "quarkus.otel.exporter.otlp.traces.enabled" was provided; it will be ignored; verify that the dependency extension for this configuration is set or that you did not make a typo
+2026-11-16 10:09:20.397 WARN  [,] [mainhread] io.qu.config - Unrecognized configuration key "quarkus.smallrye-health.show-details" was provided; it will be ignored; verify that the dependency extension for this configuration is set or that you did not make a typo
+2026-11-16 10:09:20.397 WARN  [,] [mainhread] io.qu.config - Unrecognized configuration key "quarkus.kafka.tracing.enabled" was provided; it will be ignored; verify that the dependency extension for this configuration is set or that you did not make a typo
+2026-11-16 10:09:20.398 WARN  [,] [mainhread] io.qu.config - Unrecognized configuration key "quarkus.smallrye-health.liveness.path" was provided; it will be ignored; verify that the dependency extension for this configuration is set or that you did not make a typo
+2026-11-16 10:09:20.399 WARN  [,] [mainhread] io.qu.config - Unrecognized configuration key "quarkus.opentelemetry.tracer.sampling-parent-probability" was provided; it will be ignored; verify that the dependency extension for this configuration is set or that you did not make a typo
+2026-11-16 10:09:20.399 WARN  [,] [mainhread] io.qu.config - Unrecognized configuration key "quarkus.opentelemetry.tracer.exporter.otlp.endpoint" was provided; it will be ignored; verify that the dependency extension for this configuration is set or that you did not make a typo
+2026-11-16 10:09:20.400 WARN  [,] [mainhread] io.qu.config - Unrecognized configuration key "quarkus.opentelemetry.tracer.sampling-rate" was provided; it will be ignored; verify that the dependency extension for this configuration is set or that you did not make a typo
+2026-11-16 10:09:20.400 WARN  [,] [mainhread] io.qu.config - Unrecognized configuration key "quarkus.smallrye-health.readiness.path" was provided; it will be ignored; verify that the dependency extension for this configuration is set or that you did not make a typo
+2026-11-16 10:09:20.401 WARN  [,] [mainhread] io.qu.config - Unrecognized configuration key "quarkus.resteasy.validation.throw-exception" was provided; it will be ignored; verify that the dependency extension for this configuration is set or that you did not make a typo
+2026-11-16 10:09:20.401 WARN  [,] [mainhread] io.qu.config - Unrecognized configuration key "quarkus.opentelemetry.tracer.resource-attributes.service.name" was provided; it will be ignored; verify that the dependency extension for this configuration is set or that you did not make a typo
+2026-11-16 10:09:20.853 WARN  [,] [mainhread] io.qu.config - The "quarkus.hibernate-orm.database.generation" config property is deprecated and should not be used anymore.
+2026-11-16 10:09:20.854 WARN  [,] [mainhread] io.qu.config - The "quarkus.log.file.enable" config property is deprecated and should not be used anymore.
+2026-11-16 10:09:22.790 WARN  [,] [JPA Startup Threadhread] or.hi.or.jd.warn - HHH000247: ErrorCode: 0, SQLState: 00000
+2026-11-16 10:09:22.790 WARN  [,] [JPA Startup Threadhread] or.hi.or.jd.warn - constraint "uk101n1je6y7908ymdrtyvucre1" of relation "eventopendente" does not exist, skipping
+2026-11-16 10:09:22.798 WARN  [,] [JPA Startup Threadhread] or.hi.or.jd.warn - HHH000247: ErrorCode: 0, SQLState: 00000
+2026-11-16 10:09:22.799 WARN  [,] [JPA Startup Threadhread] or.hi.or.jd.warn - constraint "uk9c0s0ia2q850sx5oyn96s0dxl" of relation "sinistro" does not exist, skipping
+2026-11-16 10:09:23.286 INFO  [,] [mainhread] io.sm.re.me.kafka - SRMSG18229: Configured topics for channel 'seguros-sinistros-in': [seguros.sinistros.events]
+2026-11-16 10:09:23.296 INFO  [,] [mainhread] io.sm.re.me.kafka - SRMSG18214: Key deserializer omitted, using String as default
+2026-11-16 10:09:23.711 INFO  [,] [smallrye-kafka-producer-thread-0hread] io.sm.re.me.kafka - SRMSG18258: Kafka producer kafka-dead-letter-topic-producer-kafka-consumer-seguros-sinistros-in, connected to Kafka brokers 'localhost:58753', is configured to write records to 'seguros-sinistros-dlq'
+2026-11-16 10:09:23.766 INFO  [,] [mainhread] io.sm.re.me.kafka - SRMSG18229: Configured topics for channel 'words-in': [words-in]
+2026-11-16 10:09:23.773 INFO  [,] [mainhread] io.sm.re.me.kafka - SRMSG18214: Key deserializer omitted, using String as default
+2026-11-16 10:09:23.800 INFO  [,] [smallrye-kafka-producer-thread-1hread] io.sm.re.me.kafka - SRMSG18258: Kafka producer kafka-producer-seguros-sinistros-dlq, connected to Kafka brokers 'localhost:58753', is configured to write records to 'seguros-sinistros-dlq'
+2026-11-16 10:09:23.822 INFO  [,] [smallrye-kafka-producer-thread-2hread] io.sm.re.me.kafka - SRMSG18258: Kafka producer kafka-producer-seguros-sinistros-out, connected to Kafka brokers 'localhost:58753', is configured to write records to 'seguros.sinistros.events'
+2026-11-16 10:09:23.840 INFO  [,] [smallrye-kafka-producer-thread-3hread] io.sm.re.me.kafka - SRMSG18258: Kafka producer kafka-producer-words-out, connected to Kafka brokers 'localhost:58753', is configured to write records to 'words-out'
+2026-11-16 10:09:23.924 INFO  [,] [smallrye-kafka-consumer-thread-0hread] io.sm.re.me.kafka - SRMSG18257: Kafka consumer kafka-consumer-seguros-sinistros-in, connected to Kafka brokers 'localhost:58753', belongs to the 'code-with-quarkus' consumer group and is configured to poll records from [seguros.sinistros.events]
+2026-11-16 10:09:23.925 INFO  [,] [smallrye-kafka-consumer-thread-1hread] io.sm.re.me.kafka - SRMSG18257: Kafka consumer kafka-consumer-words-in, connected to Kafka brokers 'localhost:58753', belongs to the 'code-with-quarkus' consumer group and is configured to poll records from [words-in]
+2026-11-16 10:09:24.062 INFO  [,] [mainhread] io.quarkus - code-with-quarkus 1.0.0-SNAPSHOT on JVM (powered by Quarkus 3.35.3) started in 33.419s. Listening on: http://localhost:8081
+2026-11-16 10:09:24.062 INFO  [,] [mainhread] io.quarkus - Profile test activated. 
+2026-11-16 10:09:24.062 INFO  [,] [mainhread] io.quarkus - Installed features: [agroal, cdi, compose, hibernate-orm, hibernate-orm-panache, hibernate-validator, jdbc-postgresql, kafka-client, kubernetes, langchain4j, langchain4j-oidc-model-auth-provider, messaging, messaging-kafka, micrometer, narayana-jta, oidc, oidc-client, opentelemetry, qute, rest, rest-client, rest-client-jackson, rest-client-oidc-filter, rest-jackson, scheduler, security, smallrye-context-propagation, smallrye-fault-tolerance, smallrye-health, smallrye-openapi, swagger-ui, vertx]
+2026-11-16 10:09:24.344 WARN  [,] [smallrye-kafka-consumer-thread-1hread] or.ap.ka.cl.NetworkClient - [Consumer clientId=kafka-consumer-words-in, groupId=code-with-quarkus] The metadata response from the cluster reported a recoverable issue with correlation id 2 : {words-in=UNKNOWN_TOPIC_OR_PARTITION}
+2026-11-16 10:09:24.344 WARN  [,] [kafka-producer-network-thread | kafka-producer-words-outhread] or.ap.ka.cl.NetworkClient - [Producer clientId=kafka-producer-words-out] The metadata response from the cluster reported a recoverable issue with correlation id 1 : {words-out=UNKNOWN_TOPIC_OR_PARTITION}
+2026-11-16 10:09:24.344 WARN  [,] [smallrye-kafka-consumer-thread-0hread] or.ap.ka.cl.NetworkClient - [Consumer clientId=kafka-consumer-seguros-sinistros-in, groupId=code-with-quarkus] The metadata response from the cluster reported a recoverable issue with correlation id 2 : {seguros.sinistros.events=UNKNOWN_TOPIC_OR_PARTITION}
+2026-11-16 10:09:30.207 INFO  [123d6de6-dcdd-44,] [quarkus-virtual-thread-0hread] io.sm.jw.config - || SERVICE RECEBEU || apoliceId=AP-24248
+2026-11-16 10:09:30.350 WARN  [123d6de6-dcdd-44,] [quarkus-virtual-thread-0hread] io.sm.jw.config - !!! FALLBACK ACIONADO !!! Motivo: kafka fora
+2026-11-16 10:09:30.353 ERROR [123d6de6-dcdd-44,] [quarkus-virtual-thread-0hread] or.ac.re.se.si.do.se.SinistroService - Falha ao gravar contingência local. sinistro=942b497d-9ad1-44aa-a390-a04e60e5dea2: java.lang.RuntimeException: router fora
 	at org.acme.resource.seguros.sinistro.adapter.in.rest.CamelRouterClient$$CDIWrapper.enviarContingencia(Unknown Source)
 	at org.acme.resource.seguros.sinistro.adapter.in.rest.CamelRouterClient$$CDIWrapper.enviarContingencia(Unknown Source)
 	at org.acme.resource.seguros.sinistro.adapter.in.rest.CamelRouterClient$$CDIWrapper_ClientProxy.enviarContingencia(Unknown Source)
-	at org.acme.resource.seguros.sinistro.domain.service.SinistroService.tratarContingencia(SinistroService.java:90)
-	at org.acme.resource.seguros.sinistro.domain.service.SinistroService.criar(SinistroService.java:76)
-	at org.acme.resource.seguros.sinistro.domain.service.SinistroService_ClientProxy.criar(Unknown Source)
-	at org.acme.resource.seguros.sinistro.adapter.in.rest.SinistroResource.criar(SinistroResource.java:66)
+	at org.acme.resource.seguros.sinistro.domain.service.SinistroService.tratarContingencia(SinistroService.java:93)
+	at org.acme.resource.seguros.sinistro.domain.service.SinistroService.criar(SinistroService.java:79)
+	at org.acme.resource.seguros.sinistro.domain.service.SinistroService.criarIdempotente(SinistroService.java:188)
+	at org.acme.resource.seguros.sinistro.domain.service.SinistroService_ClientProxy.criarIdempotente(Unknown Source)
+	at org.acme.resource.seguros.sinistro.adapter.in.rest.SinistroResource.criar(SinistroResource.java:81)
 	at org.acme.resource.seguros.sinistro.adapter.in.rest.SinistroResource_Subclass.criar$$superforward(Unknown Source)
 	at org.acme.resource.seguros.sinistro.adapter.in.rest.SinistroResource_Subclass$2.apply(Unknown Source)
 	at io.quarkus.arc.impl.AroundInvokeInvocationContext.proceed(AroundInvokeInvocationContext.java:73)
@@ -93,7 +88,7 @@ To enable reuse of containers, you must set 'testcontainers.reuse.enable=true' i
 	at io.quarkus.arc.impl.AroundInvokeInvocationContext.perform(AroundInvokeInvocationContext.java:30)
 	at io.quarkus.arc.impl.InvocationContexts.performAroundInvoke(InvocationContexts.java:27)
 	at org.acme.resource.seguros.sinistro.adapter.in.rest.SinistroResource_Subclass.criar(Unknown Source)
-	at org.acme.resource.seguros.sinistro.adapter.in.rest.SinistroResource$quarkusrestinvoker$criar_3ebe30dea16ba16d03da25405b23fd439dfed4b3.invoke(Unknown Source)
+	at org.acme.resource.seguros.sinistro.adapter.in.rest.SinistroResource$quarkusrestinvoker$criar_20d055f7269c2ed17b3315369690be74c3868948.invoke(Unknown Source)
 	at org.jboss.resteasy.reactive.server.handlers.InvocationHandler.handle(InvocationHandler.java:29)
 	at io.quarkus.resteasy.reactive.server.runtime.QuarkusResteasyReactiveRequestContext.invokeHandler(QuarkusResteasyReactiveRequestContext.java:190)
 	at org.jboss.resteasy.reactive.common.core.AbstractResteasyReactiveContext.run(AbstractResteasyReactiveContext.java:147)
@@ -101,20 +96,19 @@ To enable reuse of containers, you must set 'testcontainers.reuse.enable=true' i
 	at java.base/java.util.concurrent.ThreadPerTaskExecutor$TaskRunner.run(ThreadPerTaskExecutor.java:314)
 	at java.base/java.lang.VirtualThread.run(VirtualThread.java:329)
 
-2026-11-05 17:35:21.431 INFO  [fea35044-3dc4-4b,] [quarkus-virtual-thread-0hread] or.ac.re.se.si.do.se.ContingenciaLocalService - || CONTINGENCIA LOCAL || Evento gravado. ID: 1, uuid: 2b03f1bc-902f-4e20-9681-ec4e4a4373f0
-2026-11-05 17:35:21.941 INFO  [cb65d8fe-a245-44,] [quarkus-virtual-thread-1hread] io.sm.jw.config - || SERVICE RECEBEU || apoliceId=AP-24248
-2026-11-05 17:35:22.150 INFO  [a450cfdb-2ca5-42,] [quarkus-virtual-thread-2hread] io.sm.jw.config - || SERVICE RECEBEU || apoliceId=AP-24248
-2026-11-05 17:35:22.166 WARN  [a450cfdb-2ca5-42,] [quarkus-virtual-thread-2hread] io.sm.jw.config - !!! FALLBACK ACIONADO !!! Motivo: kafka fora
-2026-11-05 17:35:23.854 INFO  [c0508f97-80bf-46,] [quarkus-virtual-thread-3hread] io.sm.jw.config - || SERVICE RECEBEU || apoliceId=AP-24248
-2026-11-05 17:35:23.869 WARN  [c0508f97-80bf-46,] [quarkus-virtual-thread-3hread] io.sm.jw.config - !!! FALLBACK ACIONADO !!! Motivo: kafka fora
-2026-11-05 17:35:23.870 ERROR [c0508f97-80bf-46,] [quarkus-virtual-thread-3hread] or.ac.re.se.si.do.se.SinistroService - Camel Router indisponível. Gravando contingência localmente...: java.lang.RuntimeException: router fora
+2026-11-16 10:09:30.837 INFO  [e78322d6-615a-4d,] [quarkus-virtual-thread-1hread] io.sm.jw.config - || SERVICE RECEBEU || apoliceId=AP-24248
+2026-11-16 10:09:30.850 WARN  [e78322d6-615a-4d,] [quarkus-virtual-thread-1hread] io.sm.jw.config - !!! FALLBACK ACIONADO !!! Motivo: kafka fora
+2026-11-16 10:09:31.750 INFO  [33755498-143d-4b,] [quarkus-virtual-thread-2hread] io.sm.jw.config - || SERVICE RECEBEU || apoliceId=AP-24248
+2026-11-16 10:09:31.758 WARN  [33755498-143d-4b,] [quarkus-virtual-thread-2hread] io.sm.jw.config - !!! FALLBACK ACIONADO !!! Motivo: kafka fora
+2026-11-16 10:09:31.759 ERROR [33755498-143d-4b,] [quarkus-virtual-thread-2hread] or.ac.re.se.si.do.se.SinistroService - Falha ao gravar contingência local. sinistro=c8aea0fa-5e1e-47da-9b3e-0c75135f4ced: java.lang.RuntimeException: router fora
 	at org.acme.resource.seguros.sinistro.adapter.in.rest.CamelRouterClient$$CDIWrapper.enviarContingencia(Unknown Source)
 	at org.acme.resource.seguros.sinistro.adapter.in.rest.CamelRouterClient$$CDIWrapper.enviarContingencia(Unknown Source)
 	at org.acme.resource.seguros.sinistro.adapter.in.rest.CamelRouterClient$$CDIWrapper_ClientProxy.enviarContingencia(Unknown Source)
-	at org.acme.resource.seguros.sinistro.domain.service.SinistroService.tratarContingencia(SinistroService.java:90)
-	at org.acme.resource.seguros.sinistro.domain.service.SinistroService.criar(SinistroService.java:76)
-	at org.acme.resource.seguros.sinistro.domain.service.SinistroService_ClientProxy.criar(Unknown Source)
-	at org.acme.resource.seguros.sinistro.adapter.in.rest.SinistroResource.criar(SinistroResource.java:66)
+	at org.acme.resource.seguros.sinistro.domain.service.SinistroService.tratarContingencia(SinistroService.java:93)
+	at org.acme.resource.seguros.sinistro.domain.service.SinistroService.criar(SinistroService.java:79)
+	at org.acme.resource.seguros.sinistro.domain.service.SinistroService.criarIdempotente(SinistroService.java:188)
+	at org.acme.resource.seguros.sinistro.domain.service.SinistroService_ClientProxy.criarIdempotente(Unknown Source)
+	at org.acme.resource.seguros.sinistro.adapter.in.rest.SinistroResource.criar(SinistroResource.java:81)
 	at org.acme.resource.seguros.sinistro.adapter.in.rest.SinistroResource_Subclass.criar$$superforward(Unknown Source)
 	at org.acme.resource.seguros.sinistro.adapter.in.rest.SinistroResource_Subclass$2.apply(Unknown Source)
 	at io.quarkus.arc.impl.AroundInvokeInvocationContext.proceed(AroundInvokeInvocationContext.java:73)
@@ -126,7 +120,7 @@ To enable reuse of containers, you must set 'testcontainers.reuse.enable=true' i
 	at io.quarkus.arc.impl.AroundInvokeInvocationContext.perform(AroundInvokeInvocationContext.java:30)
 	at io.quarkus.arc.impl.InvocationContexts.performAroundInvoke(InvocationContexts.java:27)
 	at org.acme.resource.seguros.sinistro.adapter.in.rest.SinistroResource_Subclass.criar(Unknown Source)
-	at org.acme.resource.seguros.sinistro.adapter.in.rest.SinistroResource$quarkusrestinvoker$criar_3ebe30dea16ba16d03da25405b23fd439dfed4b3.invoke(Unknown Source)
+	at org.acme.resource.seguros.sinistro.adapter.in.rest.SinistroResource$quarkusrestinvoker$criar_20d055f7269c2ed17b3315369690be74c3868948.invoke(Unknown Source)
 	at org.jboss.resteasy.reactive.server.handlers.InvocationHandler.handle(InvocationHandler.java:29)
 	at io.quarkus.resteasy.reactive.server.runtime.QuarkusResteasyReactiveRequestContext.invokeHandler(QuarkusResteasyReactiveRequestContext.java:190)
 	at org.jboss.resteasy.reactive.common.core.AbstractResteasyReactiveContext.run(AbstractResteasyReactiveContext.java:147)
@@ -134,42 +128,17 @@ To enable reuse of containers, you must set 'testcontainers.reuse.enable=true' i
 	at java.base/java.util.concurrent.ThreadPerTaskExecutor$TaskRunner.run(ThreadPerTaskExecutor.java:314)
 	at java.base/java.lang.VirtualThread.run(VirtualThread.java:329)
 
-2026-11-05 17:35:23.874 ERROR [c0508f97-80bf-46,] [quarkus-virtual-thread-3hread] or.ac.re.se.si.do.se.SinistroService - Falha ao gravar contingência local: java.lang.RuntimeException: postgres fora
-	at org.acme.resource.seguros.sinistro.domain.service.ContingenciaLocalService_Subclass.gravarContingencia(Unknown Source)
-	at org.acme.resource.seguros.sinistro.domain.service.ContingenciaLocalService_ClientProxy.gravarContingencia(Unknown Source)
-	at org.acme.resource.seguros.sinistro.domain.service.SinistroService.tratarContingencia(SinistroService.java:102)
-	at org.acme.resource.seguros.sinistro.domain.service.SinistroService.criar(SinistroService.java:76)
-	at org.acme.resource.seguros.sinistro.domain.service.SinistroService_ClientProxy.criar(Unknown Source)
-	at org.acme.resource.seguros.sinistro.adapter.in.rest.SinistroResource.criar(SinistroResource.java:66)
-	at org.acme.resource.seguros.sinistro.adapter.in.rest.SinistroResource_Subclass.criar$$superforward(Unknown Source)
-	at org.acme.resource.seguros.sinistro.adapter.in.rest.SinistroResource_Subclass$2.apply(Unknown Source)
-	at io.quarkus.arc.impl.AroundInvokeInvocationContext.proceed(AroundInvokeInvocationContext.java:73)
-	at io.quarkus.arc.impl.AroundInvokeInvocationContext.proceed(AroundInvokeInvocationContext.java:62)
-	at io.quarkus.hibernate.validator.runtime.interceptor.AbstractMethodValidationInterceptor.validateMethodInvocation(AbstractMethodValidationInterceptor.java:73)
-	at io.quarkus.hibernate.validator.runtime.jaxrs.ResteasyReactiveEndPointValidationInterceptor.validateMethodInvocation(ResteasyReactiveEndPointValidationInterceptor.java:21)
-	at io.quarkus.hibernate.validator.runtime.jaxrs.ResteasyReactiveEndPointValidationInterceptor_Bean.intercept(Unknown Source)
-	at io.quarkus.arc.impl.InterceptorInvocation.invoke(InterceptorInvocation.java:42)
-	at io.quarkus.arc.impl.AroundInvokeInvocationContext.perform(AroundInvokeInvocationContext.java:30)
-	at io.quarkus.arc.impl.InvocationContexts.performAroundInvoke(InvocationContexts.java:27)
-	at org.acme.resource.seguros.sinistro.adapter.in.rest.SinistroResource_Subclass.criar(Unknown Source)
-	at org.acme.resource.seguros.sinistro.adapter.in.rest.SinistroResource$quarkusrestinvoker$criar_3ebe30dea16ba16d03da25405b23fd439dfed4b3.invoke(Unknown Source)
-	at org.jboss.resteasy.reactive.server.handlers.InvocationHandler.handle(InvocationHandler.java:29)
-	at io.quarkus.resteasy.reactive.server.runtime.QuarkusResteasyReactiveRequestContext.invokeHandler(QuarkusResteasyReactiveRequestContext.java:190)
-	at org.jboss.resteasy.reactive.common.core.AbstractResteasyReactiveContext.run(AbstractResteasyReactiveContext.java:147)
-	at io.quarkus.virtual.threads.ContextPreservingExecutorService$ContextPreservingRunnable.run(ContextPreservingExecutorService.java:45)
-	at java.base/java.util.concurrent.ThreadPerTaskExecutor$TaskRunner.run(ThreadPerTaskExecutor.java:314)
-	at java.base/java.lang.VirtualThread.run(VirtualThread.java:329)
-
-2026-11-05 17:35:23.994 INFO  [d95c147a-c3c4-4d,] [quarkus-virtual-thread-4hread] io.sm.jw.config - || SERVICE RECEBEU || apoliceId=AP-24248
-2026-11-05 17:35:24.005 WARN  [d95c147a-c3c4-4d,] [quarkus-virtual-thread-4hread] io.sm.jw.config - !!! FALLBACK ACIONADO !!! Motivo: kafka fora
-2026-11-05 17:35:24.006 ERROR [d95c147a-c3c4-4d,] [quarkus-virtual-thread-4hread] or.ac.re.se.si.do.se.SinistroService - Camel Router indisponível. Gravando contingência localmente...: java.lang.RuntimeException: router fora
+2026-11-16 10:09:31.797 INFO  [ee27f52c-d0cb-4c,] [quarkus-virtual-thread-3hread] io.sm.jw.config - || SERVICE RECEBEU || apoliceId=AP-24248
+2026-11-16 10:09:31.805 WARN  [ee27f52c-d0cb-4c,] [quarkus-virtual-thread-3hread] io.sm.jw.config - !!! FALLBACK ACIONADO !!! Motivo: kafka fora
+2026-11-16 10:09:31.805 ERROR [ee27f52c-d0cb-4c,] [quarkus-virtual-thread-3hread] or.ac.re.se.si.do.se.SinistroService - Falha ao gravar contingência local. sinistro=43b5ff0f-ff35-48cf-a924-b2d6a1bd098a: java.lang.RuntimeException: router fora
 	at org.acme.resource.seguros.sinistro.adapter.in.rest.CamelRouterClient$$CDIWrapper.enviarContingencia(Unknown Source)
 	at org.acme.resource.seguros.sinistro.adapter.in.rest.CamelRouterClient$$CDIWrapper.enviarContingencia(Unknown Source)
 	at org.acme.resource.seguros.sinistro.adapter.in.rest.CamelRouterClient$$CDIWrapper_ClientProxy.enviarContingencia(Unknown Source)
-	at org.acme.resource.seguros.sinistro.domain.service.SinistroService.tratarContingencia(SinistroService.java:90)
-	at org.acme.resource.seguros.sinistro.domain.service.SinistroService.criar(SinistroService.java:76)
-	at org.acme.resource.seguros.sinistro.domain.service.SinistroService_ClientProxy.criar(Unknown Source)
-	at org.acme.resource.seguros.sinistro.adapter.in.rest.SinistroResource.criar(SinistroResource.java:66)
+	at org.acme.resource.seguros.sinistro.domain.service.SinistroService.tratarContingencia(SinistroService.java:93)
+	at org.acme.resource.seguros.sinistro.domain.service.SinistroService.criar(SinistroService.java:79)
+	at org.acme.resource.seguros.sinistro.domain.service.SinistroService.criarIdempotente(SinistroService.java:188)
+	at org.acme.resource.seguros.sinistro.domain.service.SinistroService_ClientProxy.criarIdempotente(Unknown Source)
+	at org.acme.resource.seguros.sinistro.adapter.in.rest.SinistroResource.criar(SinistroResource.java:81)
 	at org.acme.resource.seguros.sinistro.adapter.in.rest.SinistroResource_Subclass.criar$$superforward(Unknown Source)
 	at org.acme.resource.seguros.sinistro.adapter.in.rest.SinistroResource_Subclass$2.apply(Unknown Source)
 	at io.quarkus.arc.impl.AroundInvokeInvocationContext.proceed(AroundInvokeInvocationContext.java:73)
@@ -181,7 +150,7 @@ To enable reuse of containers, you must set 'testcontainers.reuse.enable=true' i
 	at io.quarkus.arc.impl.AroundInvokeInvocationContext.perform(AroundInvokeInvocationContext.java:30)
 	at io.quarkus.arc.impl.InvocationContexts.performAroundInvoke(InvocationContexts.java:27)
 	at org.acme.resource.seguros.sinistro.adapter.in.rest.SinistroResource_Subclass.criar(Unknown Source)
-	at org.acme.resource.seguros.sinistro.adapter.in.rest.SinistroResource$quarkusrestinvoker$criar_3ebe30dea16ba16d03da25405b23fd439dfed4b3.invoke(Unknown Source)
+	at org.acme.resource.seguros.sinistro.adapter.in.rest.SinistroResource$quarkusrestinvoker$criar_20d055f7269c2ed17b3315369690be74c3868948.invoke(Unknown Source)
 	at org.jboss.resteasy.reactive.server.handlers.InvocationHandler.handle(InvocationHandler.java:29)
 	at io.quarkus.resteasy.reactive.server.runtime.QuarkusResteasyReactiveRequestContext.invokeHandler(QuarkusResteasyReactiveRequestContext.java:190)
 	at org.jboss.resteasy.reactive.common.core.AbstractResteasyReactiveContext.run(AbstractResteasyReactiveContext.java:147)
@@ -189,17 +158,17 @@ To enable reuse of containers, you must set 'testcontainers.reuse.enable=true' i
 	at java.base/java.util.concurrent.ThreadPerTaskExecutor$TaskRunner.run(ThreadPerTaskExecutor.java:314)
 	at java.base/java.lang.VirtualThread.run(VirtualThread.java:329)
 
-2026-11-05 17:35:24.014 INFO  [d95c147a-c3c4-4d,] [quarkus-virtual-thread-4hread] or.ac.re.se.si.do.se.ContingenciaLocalService - || CONTINGENCIA LOCAL || Evento gravado. ID: 2, uuid: 71cdeb1a-16f0-4ae0-a24d-3128ebe45388
-2026-11-05 17:35:24.126 INFO  [3420a78a-b559-48,] [quarkus-virtual-thread-5hread] io.sm.jw.config - || SERVICE RECEBEU || apoliceId=AP-24248
-2026-11-05 17:35:24.139 WARN  [3420a78a-b559-48,] [quarkus-virtual-thread-5hread] io.sm.jw.config - !!! FALLBACK ACIONADO !!! Motivo: kafka fora
-2026-11-05 17:35:24.140 ERROR [3420a78a-b559-48,] [quarkus-virtual-thread-5hread] or.ac.re.se.si.do.se.SinistroService - Camel Router indisponível. Gravando contingência localmente...: java.lang.RuntimeException: router fora
+2026-11-16 10:09:31.852 INFO  [43cbc7d8-67c4-4e,] [quarkus-virtual-thread-4hread] io.sm.jw.config - || SERVICE RECEBEU || apoliceId=AP-24248
+2026-11-16 10:09:31.862 WARN  [43cbc7d8-67c4-4e,] [quarkus-virtual-thread-4hread] io.sm.jw.config - !!! FALLBACK ACIONADO !!! Motivo: kafka fora
+2026-11-16 10:09:31.863 ERROR [43cbc7d8-67c4-4e,] [quarkus-virtual-thread-4hread] or.ac.re.se.si.do.se.SinistroService - Falha ao gravar contingência local. sinistro=a9be3e9e-aea1-42fe-8395-0e1352a29427: java.lang.RuntimeException: router fora
 	at org.acme.resource.seguros.sinistro.adapter.in.rest.CamelRouterClient$$CDIWrapper.enviarContingencia(Unknown Source)
 	at org.acme.resource.seguros.sinistro.adapter.in.rest.CamelRouterClient$$CDIWrapper.enviarContingencia(Unknown Source)
 	at org.acme.resource.seguros.sinistro.adapter.in.rest.CamelRouterClient$$CDIWrapper_ClientProxy.enviarContingencia(Unknown Source)
-	at org.acme.resource.seguros.sinistro.domain.service.SinistroService.tratarContingencia(SinistroService.java:90)
-	at org.acme.resource.seguros.sinistro.domain.service.SinistroService.criar(SinistroService.java:76)
-	at org.acme.resource.seguros.sinistro.domain.service.SinistroService_ClientProxy.criar(Unknown Source)
-	at org.acme.resource.seguros.sinistro.adapter.in.rest.SinistroResource.criar(SinistroResource.java:66)
+	at org.acme.resource.seguros.sinistro.domain.service.SinistroService.tratarContingencia(SinistroService.java:93)
+	at org.acme.resource.seguros.sinistro.domain.service.SinistroService.criar(SinistroService.java:79)
+	at org.acme.resource.seguros.sinistro.domain.service.SinistroService.criarIdempotente(SinistroService.java:188)
+	at org.acme.resource.seguros.sinistro.domain.service.SinistroService_ClientProxy.criarIdempotente(Unknown Source)
+	at org.acme.resource.seguros.sinistro.adapter.in.rest.SinistroResource.criar(SinistroResource.java:81)
 	at org.acme.resource.seguros.sinistro.adapter.in.rest.SinistroResource_Subclass.criar$$superforward(Unknown Source)
 	at org.acme.resource.seguros.sinistro.adapter.in.rest.SinistroResource_Subclass$2.apply(Unknown Source)
 	at io.quarkus.arc.impl.AroundInvokeInvocationContext.proceed(AroundInvokeInvocationContext.java:73)
@@ -211,7 +180,7 @@ To enable reuse of containers, you must set 'testcontainers.reuse.enable=true' i
 	at io.quarkus.arc.impl.AroundInvokeInvocationContext.perform(AroundInvokeInvocationContext.java:30)
 	at io.quarkus.arc.impl.InvocationContexts.performAroundInvoke(InvocationContexts.java:27)
 	at org.acme.resource.seguros.sinistro.adapter.in.rest.SinistroResource_Subclass.criar(Unknown Source)
-	at org.acme.resource.seguros.sinistro.adapter.in.rest.SinistroResource$quarkusrestinvoker$criar_3ebe30dea16ba16d03da25405b23fd439dfed4b3.invoke(Unknown Source)
+	at org.acme.resource.seguros.sinistro.adapter.in.rest.SinistroResource$quarkusrestinvoker$criar_20d055f7269c2ed17b3315369690be74c3868948.invoke(Unknown Source)
 	at org.jboss.resteasy.reactive.server.handlers.InvocationHandler.handle(InvocationHandler.java:29)
 	at io.quarkus.resteasy.reactive.server.runtime.QuarkusResteasyReactiveRequestContext.invokeHandler(QuarkusResteasyReactiveRequestContext.java:190)
 	at org.jboss.resteasy.reactive.common.core.AbstractResteasyReactiveContext.run(AbstractResteasyReactiveContext.java:147)
@@ -219,14 +188,24 @@ To enable reuse of containers, you must set 'testcontainers.reuse.enable=true' i
 	at java.base/java.util.concurrent.ThreadPerTaskExecutor$TaskRunner.run(ThreadPerTaskExecutor.java:314)
 	at java.base/java.lang.VirtualThread.run(VirtualThread.java:329)
 
-2026-11-05 17:35:24.146 INFO  [3420a78a-b559-48,] [quarkus-virtual-thread-5hread] or.ac.re.se.si.do.se.ContingenciaLocalService - || CONTINGENCIA LOCAL || Evento gravado. ID: 3, uuid: e640cfc3-4c7a-48ee-8931-1ecec988f04c
-2026-11-05 17:35:24.251 INFO  [,] [mainhread] or.ac.re.se.si.do.se.SinistroScheduler - || SCHEDULER || Iniciando reprocessamento de 1 eventos...
-2026-11-05 17:35:24.354 INFO  [,] [mainhread] or.ac.re.se.si.do.se.SinistroScheduler - || SCHEDULER || Evento ID 3 reenviado e removido.
-2026-11-05 17:35:24.648 INFO  [1a4f2968-023e-4c,] [quarkus-virtual-thread-6hread] io.sm.jw.config - || SERVICE RECEBEU || apoliceId=AP-24248
-2026-11-05 17:35:24.770 INFO  [,] [mainhread] or.ac.re.se.si.do.se.SinistroScheduler - || SCHEDULER || Iniciando reprocessamento de 1 eventos...
-2026-11-05 17:35:24.801 WARN  [,] [kafka-producer-network-thread | kafka-producer-seguros-sinistros-dlqhread] or.ap.ka.cl.NetworkClient - [Producer clientId=kafka-producer-seguros-sinistros-dlq] The metadata response from the cluster reported a recoverable issue with correlation id 4 : {seguros-sinistros-dlq=UNKNOWN_TOPIC_OR_PARTITION}
-2026-11-05 17:35:24.958 INFO  [,] [mainhread] or.ac.re.se.si.do.se.SinistroScheduler - || DLQ || Evento ID 4 enviado para seguros-sinistros-dlq
-2026-11-05 17:35:24.959 ERROR [,] [mainhread] or.ac.re.se.si.do.se.SinistroScheduler - || SCHEDULER || Evento ID 4 REJEITADO (erro permanente): apoliceId é obrigatório
-2026-11-05 17:35:25.142 INFO  [,] [smallrye-kafka-consumer-thread-0hread] io.sm.re.me.kafka - SRMSG18224: Executing consumer revoked re-balance listener for group 'code-with-quarkus'
-2026-11-05 17:35:25.562 INFO  [,] [smallrye-kafka-consumer-thread-1hread] io.sm.re.me.kafka - SRMSG18224: Executing consumer revoked re-balance listener for group 'code-with-quarkus'
-2026-11-05 17:35:26.123 INFO  [,] [mainhread] io.quarkus - code-with-quarkus stopped in 1.095s
+2026-11-16 10:09:31.972 INFO  [23b99c29-3cf3-4a,] [quarkus-virtual-thread-5hread] io.sm.jw.config - || SERVICE RECEBEU || apoliceId=AP-24248
+2026-11-16 10:09:32.127 INFO  [,] [mainhread] or.ac.re.se.si.do.se.SinistroScheduler - || SCHEDULER || Iniciando reprocessamento de 1 eventos...
+2026-11-16 10:09:32.202 WARN  [,] [kafka-producer-network-thread | kafka-producer-seguros-sinistros-dlqhread] or.ap.ka.cl.NetworkClient - [Producer clientId=kafka-producer-seguros-sinistros-dlq] The metadata response from the cluster reported a recoverable issue with correlation id 4 : {seguros-sinistros-dlq=UNKNOWN_TOPIC_OR_PARTITION}
+2026-11-16 10:09:32.336 INFO  [,] [mainhread] or.ac.re.se.si.do.se.SinistroScheduler - || DLQ || Evento ID 1 enviado para seguros-sinistros-dlq
+2026-11-16 10:09:32.337 ERROR [,] [mainhread] or.ac.re.se.si.do.se.SinistroScheduler - || SCHEDULER || Evento ID 1 REJEITADO (erro permanente): apoliceId é obrigatório
+2026-11-16 10:09:32.490 INFO  [d6275d09-a017-4f,] [quarkus-virtual-thread-6hread] io.sm.jw.config - || SERVICE RECEBEU || apoliceId=AP-IDEM-1
+2026-11-16 10:09:32.725 INFO  [7ede95b3-538b-4d,] [quarkus-virtual-thread-8hread] io.sm.jw.config - || SERVICE RECEBEU || apoliceId=AP-IDEM-1
+2026-11-16 10:09:32.755 INFO  [,] [vert.x-eventloop-thread-1hread] io.sm.re.me.kafka - SRMSG18256: Initialize record store for topic-partition 'seguros.sinistros.events-0' at position -1.
+2026-11-16 10:09:32.778 WARN  [,] [executor-thread-1hread] or.ac.re.se.si.do.se.SinistroConsumer - || KAFKA CONSUMER || Evento descartado (já processado anteriormente). UUID: 6d50b68a-08c9-40e1-a553-dcbe3cc781c6
+2026-11-16 10:09:32.783 INFO  [10af2e6b-ca55-4e,] [quarkus-virtual-thread-9hread] io.sm.jw.config - || SERVICE RECEBEU || apoliceId=AP-IDEM-1
+2026-11-16 10:09:32.794 WARN  [,] [executor-thread-1hread] or.ac.re.se.si.do.se.SinistroConsumer - || KAFKA CONSUMER || Evento descartado (já processado anteriormente). UUID: 09bf5fd2-a735-4f78-a67e-938ee8f2428d
+2026-11-16 10:09:32.846 WARN  [,] [executor-thread-1hread] or.ac.re.se.si.do.se.SinistroConsumer - || KAFKA CONSUMER || Evento descartado (já processado anteriormente). UUID: 28b06439-203c-4ae8-b4ea-08c6acc763df
+2026-11-16 10:09:33.050 INFO  [7f69af7b-a413-45,] [quarkus-virtual-thread-11hread] io.sm.jw.config - || SERVICE RECEBEU || apoliceId=AP-IDEM-1
+2026-11-16 10:09:33.085 WARN  [,] [executor-thread-1hread] or.ac.re.se.si.do.se.SinistroConsumer - || KAFKA CONSUMER || Evento descartado (já processado anteriormente). UUID: 75bca201-1e01-4888-bfdd-82ae19bc4c17
+2026-11-16 10:09:33.273 INFO  [722afec6-13af-43,] [quarkus-virtual-thread-14hread] io.sm.jw.config - || SERVICE RECEBEU || apoliceId=AP-IDEM-1
+2026-11-16 10:09:33.320 WARN  [,] [executor-thread-1hread] or.ac.re.se.si.do.se.SinistroConsumer - || KAFKA CONSUMER || Evento descartado (já processado anteriormente). UUID: 50aabd1f-8e18-4d39-8402-95bf2d356817
+2026-11-16 10:09:33.360 INFO  [eb69e728-7a02-42,] [quarkus-virtual-thread-15hread] io.sm.jw.config - || SERVICE RECEBEU || apoliceId=AP-IDEM-1
+2026-11-16 10:09:33.393 WARN  [,] [executor-thread-1hread] or.ac.re.se.si.do.se.SinistroConsumer - || KAFKA CONSUMER || Evento descartado (já processado anteriormente). UUID: 4afa3937-cf4a-4eb1-8d90-a8056e972ece
+2026-11-16 10:09:34.441 INFO  [,] [smallrye-kafka-consumer-thread-0hread] io.sm.re.me.kafka - SRMSG18224: Executing consumer revoked re-balance listener for group 'code-with-quarkus'
+2026-11-16 10:09:34.938 INFO  [,] [smallrye-kafka-consumer-thread-1hread] io.sm.re.me.kafka - SRMSG18224: Executing consumer revoked re-balance listener for group 'code-with-quarkus'
+2026-11-16 10:09:35.303 INFO  [,] [mainhread] io.quarkus - code-with-quarkus stopped in 1.823s

@@ -1,23 +1,26 @@
 package org.acme.resource.seguros.sinistro.domain.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.quarkus.security.identity.SecurityIdentity;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import org.acme.resource.seguros.sinistro.adapter.in.rest.CamelRouterClient;
 import org.acme.resource.seguros.sinistro.adapter.in.rest.dto.ContingenciaResponseDTO;
+import org.acme.resource.seguros.sinistro.adapter.out.persistence.IdempotencyKey;
+import org.acme.resource.seguros.sinistro.adapter.out.persistence.ResultadoIdempotente;
 import org.acme.resource.seguros.sinistro.api.request.SinistroRequest;
 import org.acme.resource.seguros.sinistro.api.request.SinistroUpdateRequest;
 import org.acme.resource.seguros.sinistro.api.response.SinistroResponse;
 import org.acme.resource.seguros.sinistro.domain.SinistroStatus;
 import org.acme.resource.seguros.sinistro.adapter.out.persistence.Sinistro;
-import org.acme.resource.seguros.sinistro.exception.ContingenciaIndisponivelException;
-import org.acme.resource.seguros.sinistro.exception.SinistroJaFechadoException;
-import org.acme.resource.seguros.sinistro.exception.SinistroNaoEncontradoException;
+import org.acme.resource.seguros.sinistro.exception.*;
 import org.acme.resource.seguros.sinistro.domain.mapper.SinistroMapper;
-import org.acme.resource.seguros.sinistro.exception.TransicaoInvalidaException;
 import org.acme.resource.seguros.sinistro.producer.SinistroProducer;
 import org.acme.resource.seguros.sinistro.repository.SinistroPersistencePort;
+import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,11 +37,22 @@ public class SinistroService {
 
     private static final Logger LOG = LoggerFactory.getLogger(SinistroService.class);
 
-    @Inject SinistroMapper mapper;
-    @Inject SinistroProducer producer;
-    @Inject ContingenciaLocalService contingenciaLocalService;
-    @Inject MeterRegistry meterRegistry;
-    @Inject SinistroPersistencePort persistencePort;
+    @Inject
+    SinistroMapper mapper;
+    @Inject
+    SinistroProducer producer;
+    @Inject
+    ContingenciaLocalService contingenciaLocalService;
+    @Inject
+    MeterRegistry meterRegistry;
+    @Inject
+    SinistroPersistencePort persistencePort;
+    @Inject
+    IdempotenciaService idem;
+    @Inject
+    ObjectMapper json;
+    @Inject
+    SecurityIdentity identity;
 
     @Inject
     @RestClient
@@ -76,6 +90,7 @@ public class SinistroService {
             return tratarContingencia(sinistro, e);
         }
     }
+
     // ---------------------------------------------------------------
     // CONTINGÊNCIA: Camel Router -> banco local
     // ---------------------------------------------------------------
@@ -93,6 +108,7 @@ public class SinistroService {
                 return new ResultadoCriacao.EmContingencia("Processado via Camel Router");
             }
         } catch (Exception e) {
+            // NÃO lança: segue para a gravação local
             LOG.error("Camel Router indisponível. Gravando contingência localmente...", e);
         }
 
@@ -101,9 +117,9 @@ public class SinistroService {
         try {
             contingenciaLocalService.gravarContingencia(sinistro, motivoFalha);
         } catch (Exception e) {
-            LOG.error("Falha ao gravar contingência local", e);
-            throw new ContingenciaIndisponivelException(
-                    "Não foi possível registrar o evento.", e);
+            // Só aqui o sinistro existe e nada registrou o evento
+            LOG.error("Falha ao gravar contingência local. sinistro={}", sinistro.uuid, e);
+            throw new SinistroSemEventoException(sinistro.uuid, e);
         }
 
         return new ResultadoCriacao.EmContingencia(
@@ -151,19 +167,10 @@ public class SinistroService {
     @Transactional
     public SinistroResponse alterarStatus(String uuid, SinistroStatus novo) {
         Sinistro sinistro = buscarEntidade(uuid);
-
         if (sinistro.status.isFinal()) {
             throw new SinistroJaFechadoException();
         }
-        if (novo != sinistro.status) {
-            if (!sinistro.status.podeIrPara(novo)) {
-                throw new TransicaoInvalidaException(sinistro.status, novo);
-            }
-            sinistro.status = novo;
-            if (novo == SinistroStatus.FECHADO) {
-                sinistro.dataConclusao = LocalDateTime.now();
-            }
-        }
+        aplicarTransicao(sinistro, novo);
         return mapper.toResponse(sinistro);
     }
 
@@ -185,5 +192,76 @@ public class SinistroService {
             throw new SinistroNaoEncontradoException(uuid);
         }
         return sinistro;
+    }
+
+    public ResultadoIdempotente criarIdempotente(SinistroRequest request,
+                                                 String chaveCliente) {
+        if (chaveCliente == null || chaveCliente.isBlank()) {
+            return new ResultadoIdempotente(criar(request), false);   // comportamento atual
+        }
+        String chave = solicitante() + ":" + chaveCliente;               // escopo por usuário
+        String hash = IdempotenciaService.sha256(escrever(request));
+
+        if (idem.reservar(chave, hash)) {
+            try {
+                ResultadoCriacao r = criar(request);
+                idem.concluir(chave, tipoDe(r), escrever(r));
+                return new ResultadoIdempotente(r, false);
+            } catch (SinistroSemEventoException e) {
+                idem.concluir(chave, "SEM_EVENTO", e.getUuid());   // o sinistro existe: NÃO liberar a chave
+                throw e;
+            } catch (RuntimeException e) {
+                idem.liberar(chave);                               // nada foi gravado: pode repetir
+                throw e;
+            }
+        }
+
+        IdempotencyKey k = idem.buscar(chave).orElseThrow();
+        if (!k.hashRequisicao.equals(hash)) {
+            throw new ChaveIdempotenciaReusadaException();
+        }
+        if (k.resultadoTipo == null) {
+            throw new RequisicaoEmProcessamentoException();
+        }
+        if ("SEM_EVENTO".equals(k.resultadoTipo)) {
+            throw new SinistroSemEventoException(k.respostaJson, null);   // repetição: mesmo 503, sem duplicar
+        }
+        return new ResultadoIdempotente(reconstruir(k), true);
+    }
+
+    private String tipoDe(ResultadoCriacao r) {
+        return switch (r) {
+            case ResultadoCriacao.Criado c -> "CRIADO";
+            case ResultadoCriacao.EmContingencia c -> "CONTINGENCIA";
+        };
+    }
+
+    private ResultadoCriacao reconstruir(IdempotencyKey k) {
+        try {
+            return switch (k.resultadoTipo) {
+                case "CRIADO" -> json.readValue(k.respostaJson, ResultadoCriacao.Criado.class);
+                default -> json.readValue(k.respostaJson, ResultadoCriacao.EmContingencia.class);
+            };
+        } catch (JsonProcessingException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private String escrever(Object o) {
+        try {
+            return json.writeValueAsString(o);
+        } catch (JsonProcessingException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private String solicitante() {
+        if (identity.isAnonymous()) {
+            return "anonimo";                              // testes e chamadas sem token
+        }
+        if (identity.getPrincipal() instanceof JsonWebToken token && token.getSubject() != null) {
+            return token.getSubject();                     // produção: o "sub" do Keycloak
+        }
+        return identity.getPrincipal().getName();
     }
 }
